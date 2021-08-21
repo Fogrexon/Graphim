@@ -1,4 +1,5 @@
 import babel from '@rollup/plugin-babel';
+import glslify from 'rollup-plugin-glslify';
 import postcss from 'rollup-plugin-postcss';
 import typescript from '@rollup/plugin-typescript';
 
@@ -19,6 +20,7 @@ export default [
     },
 
     plugins: [
+      glslify(),
       postcss({
         extract: true,
       }),
