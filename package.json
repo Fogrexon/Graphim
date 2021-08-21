@@ -1,0 +1,32 @@
+{
+  "name": "image-processing",
+  "version": "0.1.0",
+  "description": "Light and fast library for image effect.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fogrexon/ImageProcessing.git"
+  },
+  "keywords": [
+    "shader",
+    "image-effect"
+  ],
+  "author": "Fogrexon",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Fogrexon/ImageProcessing/issues"
+  },
+  "homepage": "https://github.com/Fogrexon/ImageProcessing#readme",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.29.2",
+    "@typescript-eslint/parser": "^4.29.2",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.24.1",
+    "prettier": "^2.3.2",
+    "typescript": "^4.3.5"
+  }
+}
