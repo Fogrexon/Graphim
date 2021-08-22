@@ -36,10 +36,10 @@ class Renderer {
     });
     this.canvas.id = this.image.id;
     Object.entries(this.image.style).forEach(([key, value]) => {
-      this.canvas.style[key] = value;
+      this.canvas.style.setProperty(key, value);
     });
     Object.entries(this.image.dataset).forEach(([key, value]) => {
-      this.canvas.dataset[key] = value;
+      this.canvas.setAttribute(`data-${key}`, <string>value);
     });
   }
 
