@@ -1,3 +1,5 @@
+import { Filter } from '../filter/Filter';
+
 interface RendererParameter{
   image: HTMLImageElement;
 }
@@ -9,6 +11,10 @@ class Renderer {
 
   private gl: WebGLRenderingContext;
 
+  private filters: Filter[];
+
+  private imageTexture: WebGLTexture | null = null;
+
   constructor({ image }: RendererParameter) {
     this.image = image;
 
@@ -18,6 +24,7 @@ class Renderer {
     image.parentElement?.removeChild(image);
 
     this.gl = <WebGLRenderingContext> this.canvas.getContext('webgl');
+    this.filters = [];
   }
 
   // copy image attrib to canvas
@@ -36,9 +43,29 @@ class Renderer {
     });
   }
 
+  public init(filters: Filter[]) {
+    const { gl } = this;
+    this.imageTexture = <WebGLTexture>gl.createTexture();
+    this.filters = filters;
+    this.filters.forEach((filter) => {
+      filter.init(this.gl, this.canvas.width, this.canvas.height);
+    });
+  }
+
   public render() {
-    this.gl.clearColor(0, 0, 0, 0);
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT || this.gl.DEPTH_BUFFER_BIT);
+    const { gl } = this;
+
+    let texture = this.imageTexture;
+
+    this.filters.forEach((filter, index) => {
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT || gl.DEPTH_BUFFER_BIT);
+      filter.render({
+        targetTexture: <WebGLTexture>texture,
+        renderToCanvas: index === this.filters.length - 1,
+      });
+      texture = filter.getRenderTexture();
+    });
   }
 }
 
