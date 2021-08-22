@@ -1,4 +1,4 @@
-import { FullScreenQuad } from './FullScreenQuad/FullScreenQuad';
+import { FullScreenQuad } from './quad/FullScreenQuad';
 import quadVertex from './glsl/quad.vs';
 
 export interface FilterRenderingInfo {

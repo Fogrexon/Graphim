@@ -46,6 +46,7 @@ export default [
     },
 
     plugins: [
+      glslify(),
       postcss({
         extract: true,
       }),
