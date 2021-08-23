@@ -1,4 +1,6 @@
-class Color {
+import { Uniform } from './Uniform';
+
+class Color implements Uniform {
   public r: number;
 
   public g: number;
@@ -16,6 +18,17 @@ class Color {
 
   public toString() {
     return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})`;
+  }
+
+  public setUniform(gl: WebGLRenderingContext, location: WebGLUniformLocation) {
+    gl.uniform4fv(location, new Float32Array([this.r, this.g, this.b, this.a]));
+  }
+
+  public set(r: number, g: number, b: number, a: number = this.a) {
+    this.r = r;
+    this.g = g;
+    this.b = b;
+    this.a = a;
   }
 }
 

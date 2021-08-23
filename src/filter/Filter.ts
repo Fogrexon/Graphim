@@ -5,6 +5,7 @@ import { Uniform } from './Uniform';
 export interface FilterRenderingInfo {
   targetTexture: WebGLTexture;
   renderToCanvas?: boolean;
+  time?: number;
 }
 
 const compileShader = (
@@ -111,7 +112,7 @@ class Filter {
     this.uniforms.init(this.gl, this.program);
   }
 
-  public render({ targetTexture, renderToCanvas }: FilterRenderingInfo) {
+  public render({ targetTexture, renderToCanvas, time }: FilterRenderingInfo) {
     const gl = <WebGLRenderingContext> this.gl;
 
     if (renderToCanvas) {
@@ -123,7 +124,7 @@ class Filter {
 
     gl.useProgram(this.program);
     this.quad?.render(gl);
-    this.uniforms?.render(gl, !!renderToCanvas);
+    this.uniforms?.render(gl, !!renderToCanvas, time);
 
     // set render texture
     gl.bindTexture(gl.TEXTURE_2D, targetTexture);

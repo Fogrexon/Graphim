@@ -69,16 +69,27 @@ class Renderer {
     });
   }
 
-  public render() {
+  public render(time = 0) {
     let texture = this.imageTexture;
 
     this.filters.forEach((filter, index) => {
       filter.render({
         targetTexture: <WebGLTexture>texture,
         renderToCanvas: index === this.filters.length - 1,
+        time,
       });
       texture = filter.getRenderTexture();
     });
+  }
+
+  public animate() {
+    const start = new Date().getTime() / 1000;
+
+    const tick = () => {
+      this.render(new Date().getTime() / 1000 - start);
+      requestAnimationFrame(tick);
+    };
+    tick();
   }
 }
 
