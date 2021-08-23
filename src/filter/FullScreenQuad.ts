@@ -53,23 +53,30 @@ class FullScreenQuad {
   private indexIBO: WebGLBuffer | null = null;
 
   public init(gl: WebGLRenderingContext, program: WebGLProgram) {
+    // position location
     this.positionLocation = gl.getAttribLocation(program, 'position');
     this.positionVBO = createVBO(gl, VERTEX_ARRAY);
 
+    // uv location
     this.uvLocation = gl.getAttribLocation(program, 'uv');
     this.uvVBO = createVBO(gl, UV_ARRAY);
+
+    // index
     this.indexIBO = createIBO(gl, INDEX_ARRAY);
   }
 
   public render(gl: WebGLRenderingContext) {
+    // position
     gl.bindBuffer(gl.ARRAY_BUFFER, this.positionVBO);
     gl.vertexAttribPointer(this.positionLocation, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(this.positionLocation);
 
+    // uv
     gl.bindBuffer(gl.ARRAY_BUFFER, this.uvVBO);
     gl.enableVertexAttribArray(this.uvLocation);
     gl.vertexAttribPointer(this.uvLocation, 2, gl.FLOAT, false, 0, 0);
 
+    // index
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexIBO);
   }
 }

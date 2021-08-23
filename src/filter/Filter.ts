@@ -1,5 +1,6 @@
 import { FullScreenQuad } from './FullScreenQuad';
 import quadVertex from './glsl/quad.vs';
+import headVector from './glsl/default.fs';
 import { UniformSetter } from './UniformSetter';
 
 export interface FilterRenderingInfo {
@@ -101,7 +102,7 @@ class Filter {
     this.fragmentShader = <WebGLShader>gl.createShader(gl.FRAGMENT_SHADER);
 
     compileShader(gl, this.vertexShader, quadVertex);
-    compileShader(gl, this.fragmentShader, this.fragmentSource);
+    compileShader(gl, this.fragmentShader, `${headVector}\n${this.fragmentSource}`);
 
     this.program = <WebGLProgram>gl.createProgram();
     linkProgram(gl, this.program, this.vertexShader, this.fragmentShader);
@@ -122,6 +123,7 @@ class Filter {
       gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
     }
 
+    // set variables
     gl.useProgram(this.program);
     this.quad?.render(gl);
     this.uniforms.render(gl, !!renderToCanvas, time);
@@ -133,6 +135,7 @@ class Filter {
 
     gl.uniform1i(prevTextureLocation, 0);
 
+    // render
     gl.clearColor(0.5, 0.5, 0.5, 1.0);
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
