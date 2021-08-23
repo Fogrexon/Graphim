@@ -15,6 +15,8 @@ img.addEventListener('load', () => {
   const renderer = new ImageProcessing.Renderer({
     image: img,
   });
+  const uni = new ImageProcessing.UniformSetter();
+  uni.set('delta', new ImageProcessing.Vector2(0.1, 0.2));
   const filter = new ImageProcessing.Filter(`
 precision mediump float;
 varying vec4 vPosition;
@@ -22,24 +24,15 @@ varying vec2 vUv;
 
 uniform sampler2D renderTexture;
 uniform float time;
+uniform vec2 delta;
+uniform float aspect;
 
 void main(void) {
-  gl_FragColor = texture2D(renderTexture, vUv + sin(time) * vec2(0.1, 0.1));
+  gl_FragColor = texture2D(renderTexture, vUv + sin(time) * distance(vUv, vec2(0.5, 0.5)) * delta * vec2(1.0 / aspect, 1.0));
 }
-  `);
-  const filter2 = new ImageProcessing.Filter(`
-precision mediump float;
-varying vec4 vPosition;
-varying vec2 vUv;
+  `, uni);
 
-uniform sampler2D renderTexture;
-
-void main(void) {
-  gl_FragColor = texture2D(renderTexture, vUv + vec2(-0.1, 0.1));
-}
-  `);
-
-  renderer.init([ filter, filter2 ]);
+  renderer.init([ filter ]);
   renderer.animate();
 })
   </script>

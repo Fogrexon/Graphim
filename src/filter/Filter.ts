@@ -1,6 +1,6 @@
-import { FullScreenQuad } from './quad/FullScreenQuad';
+import { FullScreenQuad } from './FullScreenQuad';
 import quadVertex from './glsl/quad.vs';
-import { Uniform } from './Uniform';
+import { UniformSetter } from './UniformSetter';
 
 export interface FilterRenderingInfo {
   targetTexture: WebGLTexture;
@@ -78,10 +78,11 @@ class Filter {
 
   private quad: FullScreenQuad | null = null;
 
-  private uniforms: Uniform | null = null;
+  private uniforms: UniformSetter;
 
-  constructor(fragmentSource: string) {
+  constructor(fragmentSource: string, uniforms?: UniformSetter) {
     this.fragmentSource = fragmentSource;
+    this.uniforms = uniforms || new UniformSetter();
   }
 
   public init(gl: WebGLRenderingContext, width: number, height: number) {
@@ -108,7 +109,6 @@ class Filter {
     this.quad = new FullScreenQuad();
     this.quad.init(gl, this.program);
 
-    this.uniforms = new Uniform();
     this.uniforms.init(this.gl, this.program);
   }
 
@@ -124,7 +124,7 @@ class Filter {
 
     gl.useProgram(this.program);
     this.quad?.render(gl);
-    this.uniforms?.render(gl, !!renderToCanvas, time);
+    this.uniforms.render(gl, !!renderToCanvas, time);
 
     // set render texture
     gl.bindTexture(gl.TEXTURE_2D, targetTexture);
