@@ -8,9 +8,8 @@
   <script src="../build/umd/imageprocessing.js"></script>
 </head>
 <body>
-  <img src="./images/image1.jpg" />
+  <img src="./images/image1.jpg" width=500 />
   <script>
-console.log(this);
 const img = document.getElementsByTagName("img")[0];
 img.addEventListener('load', () => {
   const renderer = new ImageProcessing.Renderer({
@@ -18,8 +17,8 @@ img.addEventListener('load', () => {
   });
   const filter = new ImageProcessing.Filter(`
 precision mediump float;
-varying mediump vec4 vPosition;
-varying mediump vec2 vUv;
+varying vec4 vPosition;
+varying vec2 vUv;
 
 uniform sampler2D renderTexture;
 
@@ -29,8 +28,8 @@ void main(void) {
   `);
   const filter2 = new ImageProcessing.Filter(`
 precision mediump float;
-varying mediump vec4 vPosition;
-varying mediump vec2 vUv;
+varying vec4 vPosition;
+varying vec2 vUv;
 
 uniform sampler2D renderTexture;
 
@@ -39,7 +38,7 @@ void main(void) {
 }
   `);
 
-  renderer.init([ filter ]);
+  renderer.init([ filter, filter2 ]);
   renderer.render();
 })
   </script>

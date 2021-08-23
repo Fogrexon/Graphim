@@ -23,22 +23,22 @@ const createIBO = (
 };
 
 const VERTEX_ARRAY = [
-  -1.0, -1.0, 0.5,
   -1.0, 1.0, 0.5,
-  1.0, -1.0, 0.5,
+  -1.0, -1.0, 0.5,
   1.0, 1.0, 0.5,
+  1.0, -1.0, 0.5,
 ];
 
 const INDEX_ARRAY = [
-  0, 2, 1,
-  1, 2, 3,
+  0, 1, 2,
+  1, 3, 2,
 ];
 
 const UV_ARRAY = [
-  0.0, 0.0,
   0.0, 1.0,
-  1.0, 0.0,
+  0.0, 0.0,
   1.0, 1.0,
+  1.0, 0.0,
 ];
 
 class FullScreenQuad {
@@ -71,7 +71,6 @@ class FullScreenQuad {
     gl.vertexAttribPointer(this.uvLocation, 2, gl.FLOAT, false, 0, 0);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexIBO);
-    console.log(this.positionLocation);
   }
 }
 

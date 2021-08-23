@@ -37,7 +37,7 @@ class Renderer {
     this.canvas = document.createElement('canvas');
     this.copyElementAttributes();
     image.parentElement?.appendChild(this.canvas);
-    // image.parentElement?.removeChild(image);
+    image.parentElement?.removeChild(image);
 
     this.gl = <WebGLRenderingContext> this.canvas.getContext('webgl');
     this.filters = [];
