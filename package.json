@@ -1,5 +1,5 @@
 {
-  "name": "image-processing",
+  "name": "graphim",
   "version": "0.2.0",
   "description": "Light and fast library for image effect.",
   "main": "build/commonjs/index.js",
