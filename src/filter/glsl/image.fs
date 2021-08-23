@@ -1,4 +1,4 @@
-varying mediump vec3 vPosition;
+varying mediump vec4 vPosition;
 varying mediump vec2 vUv;
 
 uniform sampler2D renderTexture;

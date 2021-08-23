@@ -60,4 +60,29 @@ export default [
       }),
     ],
   },
+
+  {
+    input: 'src/index.ts',
+    output: {
+      file: 'build/umd/imageprocessing.js',
+      // dir: 'build/umd',
+      format: 'umd',
+      name: 'ImageProcessing',
+      sourcemap: true,
+    },
+    plugins: [
+      glslify(),
+      postcss({
+        extract: true,
+      }),
+      babel({
+        extensions,
+      }),
+      typescript({
+        declaration: true,
+        rootDir: 'src',
+        declarationDir: 'build/umd',
+      }),
+    ],
+  },
 ];

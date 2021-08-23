@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ImageProcessing Examples</title>
+  <script src="../build/umd/imageprocessing.js"></script>
+</head>
+<body>
+  <img src="./images/image1.jpg" />
+  <script>
+console.log(this);
+const img = document.getElementsByTagName("img")[0];
+img.addEventListener('load', () => {
+  const renderer = new ImageProcessing.Renderer({
+    image: img,
+  });
+  const filter = new ImageProcessing.Filter(`
+precision mediump float;
+varying mediump vec4 vPosition;
+varying mediump vec2 vUv;
+
+uniform sampler2D renderTexture;
+
+void main(void) {
+  gl_FragColor = texture2D(renderTexture, vUv + vec2(0.1, 0.1));
+}
+  `);
+  const filter2 = new ImageProcessing.Filter(`
+precision mediump float;
+varying mediump vec4 vPosition;
+varying mediump vec2 vUv;
+
+uniform sampler2D renderTexture;
+
+void main(void) {
+  gl_FragColor = texture2D(renderTexture, vUv + vec2(-0.1, 0.1));
+}
+  `);
+
+  renderer.init([ filter ]);
+  renderer.render();
+})
+  </script>
+</body>
+</html>
