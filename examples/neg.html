@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ImageProcessing Examples - Basic</title>
+  <title>ImageProcessing Examples - Neg Filter</title>
   <script src="../build/umd/imageprocessing.js"></script>
 </head>
 <body>
@@ -15,17 +15,10 @@ img.addEventListener('load', () => {
   const renderer = new ImageProcessing.Renderer({
     image: img,
   });
-  const uni = new ImageProcessing.UniformSetter();
-  uni.set('delta', new ImageProcessing.Vector2(0.1, 0.2));
-  const filter = new ImageProcessing.Filter(`
-uniform vec2 delta;
-void main(void) {
-  gl_FragColor = texture2D(renderTexture, vUv + sin(time) * distance(vUv, vec2(0.5, 0.5)) * delta * vec2(1.0 / aspect, 1.0));
-}
-  `, uni);
+  const filter = new ImageProcessing.Primitives.Neg();
 
   renderer.init([ filter ]);
-  renderer.animate();
+  renderer.render();
 })
   </script>
 </body>
