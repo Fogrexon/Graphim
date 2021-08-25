@@ -5,6 +5,7 @@ module.exports = {
   },
   extends: [
     'airbnb-base',
+    'eslint-config-prettier',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {

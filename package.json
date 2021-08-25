@@ -6,7 +6,9 @@
   "module": "build/es/index.js",
   "scripts": {
     "build": "rollup --config",
-    "start": "rollup --config --watch"
+    "start": "rollup --config --watch",
+    "lint:prettier": "prettier \"./src/**/*.ts\" --write",
+    "lint:eslint": "eslint \"./src/**/*.ts\" --fix"
   },
   "repository": {
     "type": "git",
@@ -31,6 +33,7 @@
     "@typescript-eslint/parser": "^4.29.2",
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.24.1",
     "postcss": "^8.3.6",
     "prettier": "^2.3.2",
