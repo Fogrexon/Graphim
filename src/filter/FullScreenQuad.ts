@@ -1,7 +1,4 @@
-const createVBO = (
-  gl: WebGLRenderingContext,
-  data: number[],
-): WebGLBuffer => {
+const createVBO = (gl: WebGLRenderingContext, data: number[]): WebGLBuffer => {
   const vbo: WebGLBuffer = <WebGLBuffer>gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
@@ -9,10 +6,7 @@ const createVBO = (
   return vbo;
 };
 
-const createIBO = (
-  gl: WebGLRenderingContext,
-  index: number[],
-): WebGLBuffer => {
+const createIBO = (gl: WebGLRenderingContext, index: number[]): WebGLBuffer => {
   const ibo: WebGLBuffer = <WebGLBuffer>gl.createBuffer();
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
@@ -22,24 +16,11 @@ const createIBO = (
   return ibo;
 };
 
-const VERTEX_ARRAY = [
-  -1.0, 1.0, 0.5,
-  -1.0, -1.0, 0.5,
-  1.0, 1.0, 0.5,
-  1.0, -1.0, 0.5,
-];
+const VERTEX_ARRAY = [-1.0, 1.0, 0.5, -1.0, -1.0, 0.5, 1.0, 1.0, 0.5, 1.0, -1.0, 0.5];
 
-const INDEX_ARRAY = [
-  0, 1, 2,
-  1, 3, 2,
-];
+const INDEX_ARRAY = [0, 1, 2, 1, 3, 2];
 
-const UV_ARRAY = [
-  0.0, 1.0,
-  0.0, 0.0,
-  1.0, 1.0,
-  1.0, 0.0,
-];
+const UV_ARRAY = [0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0];
 
 class FullScreenQuad {
   private positionLocation: number = -1;

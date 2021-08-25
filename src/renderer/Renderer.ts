@@ -1,14 +1,10 @@
 import { Filter } from '../filter/Filter';
 
-interface RendererParameter{
+interface RendererParameter {
   image: HTMLImageElement;
 }
 
-const bindTexture = (
-  gl: WebGLRenderingContext,
-  texture: WebGLTexture,
-  image: HTMLImageElement,
-) => {
+const bindTexture = (gl: WebGLRenderingContext, texture: WebGLTexture, image: HTMLImageElement) => {
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
@@ -43,7 +39,7 @@ class Renderer {
     image.parentElement?.appendChild(this.canvas);
     image.parentElement?.removeChild(image);
 
-    this.gl = <WebGLRenderingContext> this.canvas.getContext('webgl');
+    this.gl = <WebGLRenderingContext>this.canvas.getContext('webgl');
     this.filters = [];
 
     this.isAnimation = false;

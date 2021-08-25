@@ -9,11 +9,7 @@ export interface FilterRenderingInfo {
   time?: number;
 }
 
-const compileShader = (
-  gl: WebGLRenderingContext,
-  shader: WebGLShader,
-  source: string,
-) => {
+const compileShader = (gl: WebGLRenderingContext, shader: WebGLShader, source: string) => {
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
@@ -26,7 +22,7 @@ const linkProgram = (
   gl: WebGLRenderingContext,
   program: WebGLProgram,
   vertex: WebGLShader,
-  fragment: WebGLShader,
+  fragment: WebGLShader
 ) => {
   gl.attachShader(program, vertex);
   gl.attachShader(program, fragment);
@@ -39,20 +35,16 @@ const setupRenderTexture = (
   frameBuffer: WebGLFramebuffer,
   texture: WebGLTexture,
   width: number,
-  height: number,
+  height: number
 ) => {
   gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
   gl.bindTexture(gl.TEXTURE_2D, texture);
 
-  gl.texImage2D(
-    gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null,
-  );
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.framebufferTexture2D(
-    gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0,
-  );
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
 
   gl.bindTexture(gl.TEXTURE_2D, null);
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -94,9 +86,7 @@ class Filter {
     this.width = width;
     this.height = height;
 
-    setupRenderTexture(
-      gl, this.framebuffer, this.targetTexture, this.width, this.height,
-    );
+    setupRenderTexture(gl, this.framebuffer, this.targetTexture, this.width, this.height);
 
     this.vertexShader = <WebGLShader>gl.createShader(gl.VERTEX_SHADER);
     this.fragmentShader = <WebGLShader>gl.createShader(gl.FRAGMENT_SHADER);
@@ -114,7 +104,7 @@ class Filter {
   }
 
   public render({ targetTexture, renderToCanvas, time }: FilterRenderingInfo) {
-    const gl = <WebGLRenderingContext> this.gl;
+    const gl = <WebGLRenderingContext>this.gl;
 
     if (renderToCanvas) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -131,7 +121,7 @@ class Filter {
     // set render texture
     gl.bindTexture(gl.TEXTURE_2D, targetTexture);
 
-    const prevTextureLocation = gl.getUniformLocation(<WebGLProgram> this.program, 'targetTexture');
+    const prevTextureLocation = gl.getUniformLocation(<WebGLProgram>this.program, 'targetTexture');
 
     gl.uniform1i(prevTextureLocation, 0);
 
