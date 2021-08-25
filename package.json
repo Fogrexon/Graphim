@@ -7,8 +7,9 @@
   "scripts": {
     "build": "rollup --config",
     "start": "rollup --config --watch",
-    "lint:prettier": "prettier \"./src/**/*.ts\" --write",
-    "lint:eslint": "eslint \"./src/**/*.ts\" --fix"
+    "lint:prettier": "prettier \"./src/**/*.ts\"",
+    "lint:eslint": "eslint \"./src/**/*.ts\"",
+    "lint:fix": "prettier \"./src/**/*.ts\" --write & eslint \"./src/**/*.ts\" --fix"
   },
   "repository": {
     "type": "git",
