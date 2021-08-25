@@ -1,14 +1,10 @@
 import { Filter } from '../filter/Filter';
 
-interface RendererParameter{
+interface RendererParameter {
   image: HTMLImageElement;
 }
 
-const bindTexture = (
-  gl: WebGLRenderingContext,
-  texture: WebGLTexture,
-  image: HTMLImageElement,
-) => {
+const bindTexture = (gl: WebGLRenderingContext, texture: WebGLTexture, image: HTMLImageElement) => {
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
@@ -31,6 +27,10 @@ class Renderer {
 
   private imageTexture: WebGLTexture | null = null;
 
+  private isAnimation: boolean = false;
+
+  private accTime: number = 0;
+
   constructor({ image }: RendererParameter) {
     this.image = image;
 
@@ -39,8 +39,10 @@ class Renderer {
     image.parentElement?.appendChild(this.canvas);
     image.parentElement?.removeChild(image);
 
-    this.gl = <WebGLRenderingContext> this.canvas.getContext('webgl');
+    this.gl = <WebGLRenderingContext>this.canvas.getContext('webgl');
     this.filters = [];
+
+    this.isAnimation = false;
   }
 
   // copy image attrib to canvas
@@ -83,13 +85,22 @@ class Renderer {
   }
 
   public animate() {
-    const start = new Date().getTime() / 1000;
+    let start = new Date().getTime() / 1000;
+    this.isAnimation = true;
 
     const tick = () => {
-      this.render(new Date().getTime() / 1000 - start);
-      requestAnimationFrame(tick);
+      const now = new Date().getTime() / 1000;
+      this.accTime += now - start;
+      start = now;
+
+      this.render(this.accTime);
+      if (this.isAnimation) requestAnimationFrame(tick);
     };
     tick();
+  }
+
+  public stopAnimate() {
+    this.isAnimation = false;
   }
 }
 

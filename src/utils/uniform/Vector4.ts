@@ -40,7 +40,7 @@ class Vector4 implements Uniform {
 
   public distance(a: Vector4): number {
     return Math.sqrt(
-      (this.x - a.x) ** 2 + (this.y - a.y) ** 2 + (this.z - a.z) ** 2 + (this.w - a.w) ** 2,
+      (this.x - a.x) ** 2 + (this.y - a.y) ** 2 + (this.z - a.z) ** 2 + (this.w - a.w) ** 2
     );
   }
 

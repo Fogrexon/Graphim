@@ -29,9 +29,7 @@ class Vector2 implements Uniform {
   }
 
   public distance(a: Vector2): number {
-    return Math.sqrt(
-      (this.x - a.x) ** 2 + (this.y - a.y) ** 2,
-    );
+    return Math.sqrt((this.x - a.x) ** 2 + (this.y - a.y) ** 2);
   }
 
   public add(a: Vector2 | number) {
