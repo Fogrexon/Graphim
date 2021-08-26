@@ -75,7 +75,7 @@ class Filter {
 
   constructor(fragmentSource: string, uniforms?: UniformSetter) {
     this.fragmentSource = fragmentSource;
-    this.uniforms = uniforms || new UniformSetter();
+    this.uniforms = uniforms || new UniformSetter({});
   }
 
   public init(gl: WebGLRenderingContext, width: number, height: number) {
