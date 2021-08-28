@@ -31,6 +31,10 @@ class Renderer {
 
   private accTime: number = 0;
 
+  private mouse: [number, number] = [0, 0];
+
+  private isHover: boolean = false;
+
   constructor({ image }: RendererParameter) {
     this.image = image;
 
@@ -38,6 +42,32 @@ class Renderer {
     this.copyElementAttributes();
     image.parentElement?.appendChild(this.canvas);
     image.parentElement?.removeChild(image);
+
+    // mouse event
+    this.canvas.addEventListener('mouseenter', (e) => {
+      this.isHover = true;
+      this.handlePointer(e);
+    });
+    this.canvas.addEventListener('mousemove', (e) => {
+      this.handlePointer(e);
+    });
+    this.canvas.addEventListener('mouseleave', (e) => {
+      this.isHover = false;
+      this.handlePointer(e);
+    });
+
+    // touch event
+    this.canvas.addEventListener('touchstart', (e) => {
+      this.isHover = true;
+      this.handlePointer(e);
+    });
+    this.canvas.addEventListener('touchmove', (e) => {
+      this.handlePointer(e);
+    });
+    this.canvas.addEventListener('touchend', (e) => {
+      this.isHover = false;
+      this.handlePointer(e);
+    });
 
     this.gl = <WebGLRenderingContext>this.canvas.getContext('webgl');
     this.filters = [];
@@ -61,6 +91,16 @@ class Renderer {
     });
   }
 
+  private handlePointer(e: MouseEvent | TouchEvent) {
+    if (e instanceof TouchEvent) {
+      const rect = (<HTMLElement>e.target).getBoundingClientRect();
+      this.mouse = [(e.touches[0].clientX - window.pageXOffset - rect.left) / this.canvas.width,
+      (e.touches[0].clientX - window.pageXOffset - rect.left) / this.canvas.height];
+    } else {
+      this.mouse = [e.offsetX / this.canvas.width, e.offsetY / this.canvas.height];
+    }
+  }
+
   public init(filters: Filter[]) {
     const { gl } = this;
     this.imageTexture = <WebGLTexture>gl.createTexture();
@@ -79,6 +119,8 @@ class Renderer {
         targetTexture: <WebGLTexture>texture,
         renderToCanvas: index === this.filters.length - 1,
         time,
+        mouse: this.mouse,
+        isHover: this.isHover,
       });
       texture = filter.getRenderTexture();
     });
