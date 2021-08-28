@@ -5,3 +5,4 @@ export { Gray } from './Gray';
 export { Bloom } from './Bloom';
 export { Blur } from './Blur';
 export { Pixel } from './Pixel';
+export { FrostedGlass } from './FrostedGlass';

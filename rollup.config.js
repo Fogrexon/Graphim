@@ -46,7 +46,6 @@ export default [
     },
 
     plugins: [
-      glslify(),
       postcss({
         extract: true,
       }),
@@ -58,6 +57,7 @@ export default [
         rootDir: 'src',
         declarationDir: 'build/es6',
       }),
+      glslify(),
     ],
   },
 
@@ -71,7 +71,6 @@ export default [
       sourcemap: true,
     },
     plugins: [
-      glslify(),
       postcss({
         extract: true,
       }),
@@ -83,6 +82,7 @@ export default [
         rootDir: 'src',
         declarationDir: 'build/umd',
       }),
+      glslify(),
     ],
   },
 ];

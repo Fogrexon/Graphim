@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ImageProcessing Examples - frostedGlass Filter</title>
+  <script src="../build/umd/imageprocessing.js"></script>
+</head>
+<body>
+  <img src="./images/image1.jpg" width=500 />
+  <input type="range" min=1 max=30 value=1 id="random-size" step="1" />
+  <script>
+    let filter;
+const img = document.getElementsByTagName("img")[0];
+img.addEventListener('load', () => {
+  const renderer = new ImageProcessing.Renderer({
+    image: img,
+  });
+  filter = new ImageProcessing.Primitives.FrostedGlass(3);
+
+  renderer.init([ filter ]);
+  renderer.animate();
+});
+
+document.getElementById('random-size').addEventListener('change', (e) => {
+  filter.uniforms.valueMap.randomSize.set(e.target.value);
+})
+  </script>
+</body>
+</html>
