@@ -8,7 +8,7 @@
   <script src="../build/umd/imageprocessing.js"></script>
 </head>
 <body>
-  <img src="./images/image1.jpg" width=500 />
+  <img src="./images/image2.png" width=500 />
   <input type="range" min=0 max=1 value=0.5 id="threshold" step="0.01" />
   <script>
     let filter;
@@ -17,7 +17,7 @@ img.addEventListener('load', () => {
   const renderer = new ImageProcessing.Renderer({
     image: img,
   });
-  filter = new ImageProcessing.Primitives.Bloom(0.5, 0.5, 20);
+  filter = new ImageProcessing.Primitives.Bloom(0.5, 3, 40);
 
   renderer.init([ filter ]);
   renderer.animate();
