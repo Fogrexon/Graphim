@@ -3,7 +3,7 @@ import { Uniform } from './Uniform';
 class Float implements Uniform {
   public x: number;
 
-  constructor(x: number) {
+  constructor(x: number = 0) {
     this.x = x;
   }
 
