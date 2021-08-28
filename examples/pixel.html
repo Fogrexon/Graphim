@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ImageProcessing Examples - Blur Filter</title>
+  <title>ImageProcessing Examples - Pixel Filter</title>
   <script src="../build/umd/imageprocessing.js"></script>
 </head>
 <body>
   <img src="./images/image1.jpg" width=500 />
-  <input type="range" min=1 max=20 value=0.5 id="strength" step="1" />
+  <input type="range" min=1 max=30 value=1 id="block-size" step="1" />
   <script>
     let filter;
 const img = document.getElementsByTagName("img")[0];
@@ -17,15 +17,14 @@ img.addEventListener('load', () => {
   const renderer = new ImageProcessing.Renderer({
     image: img,
   });
-  filter = new ImageProcessing.Primitives.Blur(5);
+  filter = new ImageProcessing.Primitives.Pixel(1);
 
   renderer.init([ filter ]);
   renderer.animate();
 });
 
-document.getElementById('strength').addEventListener('change', (e) => {
-  console.log("strength");
-  filter.uniforms.valueMap.strength.set(e.target.value)
+document.getElementById('block-size').addEventListener('change', (e) => {
+  filter.uniforms.valueMap.blockSize.set(e.target.value);
 })
   </script>
 </body>
