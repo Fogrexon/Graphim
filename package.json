@@ -1,6 +1,6 @@
 {
   "name": "graphim",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Light and fast library for image effect.",
   "main": "build/commonjs/index.js",
   "module": "build/es/index.js",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Fogrexon/ImageProcessing.git"
+    "url": "git+https://github.com/Fogrexon/Graphim.git"
   },
   "keywords": [
     "shader",
@@ -22,9 +22,9 @@
   "author": "Fogrexon",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Fogrexon/ImageProcessing/issues"
+    "url": "https://github.com/Fogrexon/Graphim/issues"
   },
-  "homepage": "https://github.com/Fogrexon/ImageProcessing#readme",
+  "homepage": "https://github.com/Fogrexon/Graphim#readme",
   "devDependencies": {
     "@babel/core": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
@@ -43,8 +43,5 @@
     "rollup-plugin-postcss": "^4.0.1",
     "tslib": "^2.3.1",
     "typescript": "^4.3.5"
-  },
-  "dependencies": {
-    "glslify": "^7.1.1"
   }
 }

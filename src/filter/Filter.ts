@@ -7,6 +7,8 @@ export interface FilterRenderingInfo {
   targetTexture: WebGLTexture;
   renderToCanvas?: boolean;
   time?: number;
+  mouse?: [number, number];
+  isHover?: boolean;
 }
 
 const compileShader = (gl: WebGLRenderingContext, shader: WebGLShader, source: string) => {
@@ -75,7 +77,7 @@ class Filter {
 
   constructor(fragmentSource: string, uniforms?: UniformSetter) {
     this.fragmentSource = fragmentSource;
-    this.uniforms = uniforms || new UniformSetter();
+    this.uniforms = uniforms || new UniformSetter({});
   }
 
   public init(gl: WebGLRenderingContext, width: number, height: number) {
@@ -103,7 +105,18 @@ class Filter {
     this.uniforms.init(this.gl, this.program);
   }
 
-  public render({ targetTexture, renderToCanvas, time }: FilterRenderingInfo) {
+  public release() {
+    if (!this.gl || !this.quad) return;
+    this.gl.deleteFramebuffer(this.framebuffer);
+    this.gl.deleteTexture(this.targetTexture);
+    this.gl.deleteShader(this.vertexShader);
+    this.gl.deleteShader(this.fragmentShader);
+    this.gl.deleteProgram(this.program);
+
+    this.quad.release(this.gl);
+  }
+
+  public render({ targetTexture, renderToCanvas, time, mouse = [0, 0], isHover = false }: FilterRenderingInfo) {
     const gl = <WebGLRenderingContext>this.gl;
 
     if (renderToCanvas) {
@@ -116,7 +129,7 @@ class Filter {
     // set variables
     gl.useProgram(this.program);
     this.quad?.render(gl);
-    this.uniforms.render(gl, !!renderToCanvas, time);
+    this.uniforms.render(gl, !!renderToCanvas, time, mouse, isHover);
 
     // set render texture
     gl.bindTexture(gl.TEXTURE_2D, targetTexture);

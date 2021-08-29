@@ -4,28 +4,27 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Graphim Examples - Basic</title>
+  <title>Graphim Examples - Pixel Filter</title>
   <script src="../build/umd/graphim.js"></script>
 </head>
 <body>
   <img src="./images/image1.jpg" width=500 />
+  <input type="range" min=1 max=30 value=1 id="block-size" step="1" />
   <script>
+    let filter;
 const img = document.getElementsByTagName("img")[0];
 img.addEventListener('load', () => {
   const renderer = new Graphim.Renderer({
     image: img,
   });
-  const uni = new Graphim.UniformSetter();
-  uni.set('delta', new Graphim.Vector2(0.1, 0.2));
-  const filter = new Graphim.Filter(`
-uniform vec2 delta;
-void main(void) {
-  gl_FragColor = texture2D(renderTexture, vUv + sin(time) * distance(vUv, vec2(0.5, 0.5)) * delta);
-}
-  `, uni);
+  filter = new Graphim.Primitives.Pixel(1);
 
   renderer.init([ filter ]);
   renderer.animate();
+});
+
+document.getElementById('block-size').addEventListener('change', (e) => {
+  filter.uniforms.valueMap.blockSize.set(e.target.value);
 })
   </script>
 </body>

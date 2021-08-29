@@ -46,7 +46,6 @@ export default [
     },
 
     plugins: [
-      glslify(),
       postcss({
         extract: true,
       }),
@@ -58,20 +57,20 @@ export default [
         rootDir: 'src',
         declarationDir: 'build/es6',
       }),
+      glslify(),
     ],
   },
 
   {
     input: 'src/index.ts',
     output: {
-      file: 'build/umd/imageprocessing.js',
+      file: 'build/umd/graphim.js',
       // dir: 'build/umd',
       format: 'umd',
-      name: 'ImageProcessing',
+      name: 'Graphim',
       sourcemap: true,
     },
     plugins: [
-      glslify(),
       postcss({
         extract: true,
       }),
@@ -83,6 +82,7 @@ export default [
         rootDir: 'src',
         declarationDir: 'build/umd',
       }),
+      glslify(),
     ],
   },
 ];
