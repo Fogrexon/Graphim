@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ImageProcessing Examples - Basic</title>
+  <title>Graphim Examples - Basic</title>
   <script src="../build/umd/imageprocessing.js"></script>
 </head>
 <body>
@@ -12,12 +12,12 @@
   <script>
 const img = document.getElementsByTagName("img")[0];
 img.addEventListener('load', () => {
-  const renderer = new ImageProcessing.Renderer({
+  const renderer = new Graphim.Renderer({
     image: img,
   });
-  const uni = new ImageProcessing.UniformSetter();
-  uni.set('delta', new ImageProcessing.Vector2(0.1, 0.2));
-  const filter = new ImageProcessing.Filter(`
+  const uni = new Graphim.UniformSetter();
+  uni.set('delta', new Graphim.Vector2(0.1, 0.2));
+  const filter = new Graphim.Filter(`
 uniform vec2 delta;
 void main(void) {
   gl_FragColor = texture2D(renderTexture, vUv + sin(time) * distance(vUv, vec2(0.5, 0.5)) * delta);

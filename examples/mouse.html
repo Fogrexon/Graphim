@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ImageProcessing Examples - Mouse</title>
+  <title>Graphim Examples - Mouse</title>
   <script src="../build/umd/imageprocessing.js"></script>
 </head>
 <body>
@@ -12,13 +12,13 @@
   <script>
 const img = document.getElementsByTagName("img")[0];
 img.addEventListener('load', () => {
-  const renderer = new ImageProcessing.Renderer({
+  const renderer = new Graphim.Renderer({
     image: img,
   });
-  const uni = new ImageProcessing.UniformSetter();
-  const power = new ImageProcessing.Float(0.0);
+  const uni = new Graphim.UniformSetter();
+  const power = new Graphim.Float(0.0);
   uni.set('power', power);
-  const filter = new ImageProcessing.Filter(`
+  const filter = new Graphim.Filter(`
 uniform float power;
 void main(void) {
   float dist = distance(vUv, mouse);

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ImageProcessing Examples - Pixel Filter</title>
+  <title>Graphim Examples - Pixel Filter</title>
   <script src="../build/umd/imageprocessing.js"></script>
 </head>
 <body>
@@ -14,10 +14,10 @@
     let filter;
 const img = document.getElementsByTagName("img")[0];
 img.addEventListener('load', () => {
-  const renderer = new ImageProcessing.Renderer({
+  const renderer = new Graphim.Renderer({
     image: img,
   });
-  filter = new ImageProcessing.Primitives.Pixel(1);
+  filter = new Graphim.Primitives.Pixel(1);
 
   renderer.init([ filter ]);
   renderer.animate();

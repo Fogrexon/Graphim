@@ -1,5 +1,13 @@
-# ImageProcessing
+# Graphim
+
 This library is for image effect by WebGL
 
-# Author
+## Use
+
+```javascript
+
+```
+
+## Author
+
 Fogrexon

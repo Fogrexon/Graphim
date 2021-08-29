@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Fogrexon/ImageProcessing.git"
+    "url": "git+https://github.com/Fogrexon/Graphim.git"
   },
   "keywords": [
     "shader",
@@ -22,9 +22,9 @@
   "author": "Fogrexon",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Fogrexon/ImageProcessing/issues"
+    "url": "https://github.com/Fogrexon/Graphim/issues"
   },
-  "homepage": "https://github.com/Fogrexon/ImageProcessing#readme",
+  "homepage": "https://github.com/Fogrexon/Graphim#readme",
   "devDependencies": {
     "@babel/core": "^7.15.0",
     "@babel/preset-env": "^7.15.0",

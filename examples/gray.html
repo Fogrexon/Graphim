@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ImageProcessing Examples - Gray Filter</title>
+  <title>Graphim Examples - Gray Filter</title>
   <script src="../build/umd/imageprocessing.js"></script>
 </head>
 <body>
@@ -12,10 +12,10 @@
   <script>
 const img = document.getElementsByTagName("img")[0];
 img.addEventListener('load', () => {
-  const renderer = new ImageProcessing.Renderer({
+  const renderer = new Graphim.Renderer({
     image: img,
   });
-  const filter = new ImageProcessing.Primitives.Gray();
+  const filter = new Graphim.Primitives.Gray();
 
   renderer.init([ filter ]);
   renderer.render();

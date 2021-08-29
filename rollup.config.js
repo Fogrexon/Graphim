@@ -67,7 +67,7 @@ export default [
       file: 'build/umd/imageprocessing.js',
       // dir: 'build/umd',
       format: 'umd',
-      name: 'ImageProcessing',
+      name: 'Graphim',
       sourcemap: true,
     },
     plugins: [
