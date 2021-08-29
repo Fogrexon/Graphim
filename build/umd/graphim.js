@@ -1536,4 +1536,4 @@
   Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
-//# sourceMappingURL=imageprocessing.js.map
+//# sourceMappingURL=graphim.js.map

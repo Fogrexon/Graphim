@@ -64,7 +64,7 @@ export default [
   {
     input: 'src/index.ts',
     output: {
-      file: 'build/umd/imageprocessing.js',
+      file: 'build/umd/graphim.js',
       // dir: 'build/umd',
       format: 'umd',
       name: 'Graphim',
