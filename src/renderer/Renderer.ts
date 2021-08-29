@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { Filter } from '../filter/Filter';
 
 interface RendererParameter {
@@ -15,6 +16,21 @@ const bindTexture = (gl: WebGLRenderingContext, texture: WebGLTexture, image: HT
 
   gl.bindTexture(gl.TEXTURE_2D, null);
 };
+
+const copyElementAttributes = (a: HTMLImageElement | HTMLCanvasElement, b: HTMLImageElement | HTMLCanvasElement) => {
+  a.width = b.width;
+  a.height = b.height;
+  b.classList.forEach((className) => {
+    a.classList.add(className);
+  });
+  a.id = b.id;
+  Object.entries(b.style).forEach(([key, value]) => {
+    a.style.setProperty(key, value);
+  });
+  Object.entries(b.dataset).forEach(([key, value]) => {
+    a.setAttribute(`data-${key}`, <string>value);
+  });
+}
 
 class Renderer {
   private image: HTMLImageElement;
@@ -39,7 +55,7 @@ class Renderer {
     this.image = image;
 
     this.canvas = document.createElement('canvas');
-    this.copyElementAttributes();
+    copyElementAttributes(this.canvas, this.image);
     image.parentElement?.appendChild(this.canvas);
     image.parentElement?.removeChild(image);
 
@@ -75,22 +91,6 @@ class Renderer {
     this.isAnimation = false;
   }
 
-  // copy image attrib to canvas
-  private copyElementAttributes() {
-    this.canvas.width = this.image.width;
-    this.canvas.height = this.image.height;
-    this.image.classList.forEach((className) => {
-      this.canvas.classList.add(className);
-    });
-    this.canvas.id = this.image.id;
-    Object.entries(this.image.style).forEach(([key, value]) => {
-      this.canvas.style.setProperty(key, value);
-    });
-    Object.entries(this.image.dataset).forEach(([key, value]) => {
-      this.canvas.setAttribute(`data-${key}`, <string>value);
-    });
-  }
-
   private handlePointer(e: MouseEvent | TouchEvent) {
     if (e instanceof TouchEvent) {
       const rect = (<HTMLElement>e.target).getBoundingClientRect();
@@ -109,6 +109,34 @@ class Renderer {
     this.filters.forEach((filter) => {
       filter.init(this.gl, this.canvas.width, this.canvas.height);
     });
+  }
+
+  public resetFilter(filters: Filter[]) {
+    this.filters.forEach(filter => {
+      filter.release();
+    });
+    this.filters = filters;
+    this.filters.forEach((filter) => {
+      filter.init(this.gl, this.canvas.width, this.canvas.height);
+    });
+  }
+
+  public resetImage(image: HTMLImageElement) {
+    copyElementAttributes(this.canvas, this.image);
+    this.canvas.parentElement?.appendChild(this.image);
+    image.parentElement?.appendChild(this.canvas);
+    image.parentElement?.removeChild(image);
+    this.image = image;
+    if(this.imageTexture) bindTexture(this.gl, this.imageTexture, this.image);
+  }
+
+  public release() {
+    this.gl.deleteTexture(this.imageTexture);
+    this.filters.forEach(filter => {
+      filter.release();
+    });
+    this.canvas.parentElement?.appendChild(this.image);
+    this.canvas.remove();
   }
 
   public render(time = 0) {

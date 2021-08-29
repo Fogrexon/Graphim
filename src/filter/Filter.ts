@@ -105,6 +105,17 @@ class Filter {
     this.uniforms.init(this.gl, this.program);
   }
 
+  public release() {
+    if (!this.gl || !this.quad) return;
+    this.gl.deleteFramebuffer(this.framebuffer);
+    this.gl.deleteTexture(this.targetTexture);
+    this.gl.deleteShader(this.vertexShader);
+    this.gl.deleteShader(this.fragmentShader);
+    this.gl.deleteProgram(this.program);
+
+    this.quad.release(this.gl);
+  }
+
   public render({ targetTexture, renderToCanvas, time, mouse = [0, 0], isHover = false }: FilterRenderingInfo) {
     const gl = <WebGLRenderingContext>this.gl;
 

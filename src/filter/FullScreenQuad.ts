@@ -46,6 +46,12 @@ class FullScreenQuad {
     this.indexIBO = createIBO(gl, INDEX_ARRAY);
   }
 
+  public release(gl: WebGLRenderingContext) {
+    gl.deleteBuffer(this.positionVBO);
+    gl.deleteBuffer(this.uvVBO);
+    gl.deleteBuffer(this.indexIBO);
+  }
+
   public render(gl: WebGLRenderingContext) {
     // position
     gl.bindBuffer(gl.ARRAY_BUFFER, this.positionVBO);
