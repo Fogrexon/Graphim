@@ -4,28 +4,37 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Graphim Examples - Mouse</title>
+  <title>Graphim Examples - Reset shader</title>
   <script src="../build/umd/graphim.js"></script>
 </head>
 <body>
   <img src="./images/image1.jpg" width=500 />
   <script>
-const img = document.getElementsByTagName("img")[0];
-img.addEventListener('load', () => {
+const imgs = [
+  document.getElementsByTagName("img")[0],
+  new Image()
+];
+imgs[1].src = './images/image2.png';
+imgs[0].addEventListener('load', () => {
   const renderer = new Graphim.Renderer({
-    image: img,
+    image: imgs[0],
   });
   const uni = new Graphim.UniformSetter();
   const power = new Graphim.Float(0.0);
   uni.set('power', power);
   const filter = new Graphim.Filter(`
 uniform float power;
+
+#define PI 3.14159265
 void main(void) {
-  float dist = distance(vUv, mouse);
-  float decay = exp(-dist * 5.0 - 2.0);
-  gl_FragColor = texture2D(renderTexture, vUv + normalize(mouse - vUv) * sin(-time * 10.0 + dist * 30.0) * decay * power);
+  vec4 accCol = vec4(0.0);
+
+  for(float theta=0.0; theta < PI * 2.0; theta += PI * 2.0 / 20.0 ) {
+    accCol += texture2D(renderTexture, vUv + vec2(cos(theta), sin(theta)) * 0.01) / 20.0;
+  }
+  gl_FragColor = accCol;
 }
-  `, uni);
+`, uni);
 
   renderer.animate([ filter ]);
 
@@ -33,6 +42,16 @@ void main(void) {
   setInterval(() => {
     power.set(power.x * 0.95);
   }, 1000 / 60);
+
+  let index = 0;
+
+  setInterval(() => {
+    index = index == imgs.length - 1 ? 0 : index + 1;
+    const height = imgs[index].naturalHeight / imgs[index].naturalWidth * 500;
+    imgs[index].width = 500;
+    imgs[index].height = height;
+    renderer.setImage(imgs[index]);
+  }, 3000);
 
   renderer.canvas.addEventListener('mousemove', () => power.set(1));
   renderer.canvas.addEventListener('touchmove', () => power.set(1));

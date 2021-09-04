@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { v4 as uuidv4 } from 'uuid';
 import { Filter } from '../filter/Filter';
 
 interface RendererParameter {
@@ -17,7 +18,10 @@ const bindTexture = (gl: WebGLRenderingContext, texture: WebGLTexture, image: HT
   gl.bindTexture(gl.TEXTURE_2D, null);
 };
 
-const copyElementAttributes = (a: HTMLImageElement | HTMLCanvasElement, b: HTMLImageElement | HTMLCanvasElement) => {
+const copyElementAttributes = (
+  a: HTMLImageElement | HTMLCanvasElement,
+  b: HTMLImageElement | HTMLCanvasElement
+) => {
   a.width = b.width;
   a.height = b.height;
   b.classList.forEach((className) => {
@@ -30,18 +34,18 @@ const copyElementAttributes = (a: HTMLImageElement | HTMLCanvasElement, b: HTMLI
   Object.entries(b.dataset).forEach(([key, value]) => {
     a.setAttribute(`data-${key}`, <string>value);
   });
-}
+};
 
 class Renderer {
+  private originalImage: HTMLImageElement;
+
   private image: HTMLImageElement;
 
   private canvas: HTMLCanvasElement;
 
   private gl: WebGLRenderingContext;
 
-  private filters: Filter[];
-
-  private imageTexture: WebGLTexture | null = null;
+  private imageTexture: WebGLTexture;
 
   private isAnimation: boolean = false;
 
@@ -51,13 +55,18 @@ class Renderer {
 
   private isHover: boolean = false;
 
+  private uuid: string;
+
   constructor({ image }: RendererParameter) {
-    this.image = image;
+    this.originalImage = image;
+
+    this.image = <HTMLImageElement>image.cloneNode();
 
     this.canvas = document.createElement('canvas');
-    copyElementAttributes(this.canvas, this.image);
-    image.parentElement?.appendChild(this.canvas);
-    image.parentElement?.removeChild(image);
+    copyElementAttributes(this.canvas, image);
+    image.after(this.canvas);
+    image.style.display = 'none';
+    this.uuid = uuidv4();
 
     // mouse event
     this.canvas.addEventListener('mouseenter', (e) => {
@@ -86,75 +95,63 @@ class Renderer {
     });
 
     this.gl = <WebGLRenderingContext>this.canvas.getContext('webgl');
-    this.filters = [];
 
     this.isAnimation = false;
+
+    this.imageTexture = <WebGLTexture>this.gl.createTexture();
+    bindTexture(this.gl, this.imageTexture, this.image);
   }
 
   private handlePointer(e: MouseEvent | TouchEvent) {
     if (e instanceof TouchEvent) {
       const rect = (<HTMLElement>e.target).getBoundingClientRect();
-      this.mouse = [(e.touches[0].clientX - window.pageXOffset - rect.left) / this.canvas.width,
-      (e.touches[0].clientX - window.pageXOffset - rect.left) / this.canvas.height];
+      this.mouse = [
+        (e.touches[0].clientX - window.pageXOffset - rect.left) / this.canvas.width,
+        (e.touches[0].clientX - window.pageXOffset - rect.left) / this.canvas.height,
+      ];
     } else {
       this.mouse = [e.offsetX / this.canvas.width, e.offsetY / this.canvas.height];
     }
   }
 
-  public init(filters: Filter[]) {
-    const { gl } = this;
-    this.imageTexture = <WebGLTexture>gl.createTexture();
-    bindTexture(gl, this.imageTexture, this.image);
-    this.filters = filters;
-    this.filters.forEach((filter) => {
-      filter.init(this.gl, this.canvas.width, this.canvas.height);
-    });
-  }
+  public setImage(image: HTMLImageElement) {
+    this.image.src = image.src;
+    this.image.width = image.width;
+    this.image.height = image.height;
 
-  public resetFilter(filters: Filter[]) {
-    this.filters.forEach(filter => {
-      filter.release();
+    this.image.addEventListener('load', () => {
+      this.canvas.width = this.image.width;
+      this.canvas.height = this.image.height;
+      bindTexture(this.gl, this.imageTexture, this.image);
     });
-    this.filters = filters;
-    this.filters.forEach((filter) => {
-      filter.init(this.gl, this.canvas.width, this.canvas.height);
-    });
-  }
-
-  public resetImage(image: HTMLImageElement) {
-    copyElementAttributes(this.canvas, this.image);
-    this.canvas.parentElement?.appendChild(this.image);
-    image.parentElement?.appendChild(this.canvas);
-    image.parentElement?.removeChild(image);
-    this.image = image;
-    if(this.imageTexture) bindTexture(this.gl, this.imageTexture, this.image);
   }
 
   public release() {
     this.gl.deleteTexture(this.imageTexture);
-    this.filters.forEach(filter => {
-      filter.release();
-    });
-    this.canvas.parentElement?.appendChild(this.image);
+    this.image.style.removeProperty('display');
     this.canvas.remove();
   }
 
-  public render(time = 0) {
+  public render(filters: Filter[], time = 0) {
     let texture = this.imageTexture;
 
-    this.filters.forEach((filter, index) => {
+    filters.forEach((filter, index) => {
+      if (this.uuid !== filter.getInitializedUUID()) {
+        filter.release();
+        filter.init(this.gl, this.uuid);
+      }
       filter.render({
         targetTexture: <WebGLTexture>texture,
-        renderToCanvas: index === this.filters.length - 1,
+        renderToCanvas: index === filters.length - 1,
         time,
         mouse: this.mouse,
         isHover: this.isHover,
       });
-      texture = filter.getRenderTexture();
+      texture = filter.getRenderTexture() || texture;
     });
   }
 
-  public animate() {
+  public animate(filters: Filter[]) {
     let start = new Date().getTime() / 1000;
     this.isAnimation = true;
 
@@ -163,7 +160,7 @@ class Renderer {
       this.accTime += now - start;
       start = now;
 
-      this.render(this.accTime);
+      this.render(filters, this.accTime);
       if (this.isAnimation) requestAnimationFrame(tick);
     };
     tick();

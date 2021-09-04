@@ -45,6 +45,9 @@ const renderer = new Graphim.Renderer({
   image: img, // image: HTMLImageElement
 });
 
+// set new image
+renderer.setImage(image);
+
 // Uniform
 const uni = new Graphim.UniformSetter();
 uni.set('delta', new Graphim.Vector2(0.1, 0.2));
@@ -68,13 +71,13 @@ void main(void) {
   uni
 );
 
-// initialize
-renderer.init([filter]);
+// set new shader
+filter.setShader(newShader, uniform?);
 
 // render
-renderer.animate();
+renderer.animate([ filter1, filter2, ... ]);
 // render once
-// renderer.render();
+// renderer.render([ filter1, filter2, ... ]);
 ```
 
 ## default shader variables

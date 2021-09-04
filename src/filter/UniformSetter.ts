@@ -19,9 +19,11 @@ class UniformSetter {
 
   private isHoverLocation: WebGLUniformLocation = -1;
 
-  constructor(valueMap: {
-    [key: string]: Uniform;
-  } = {}) {
+  constructor(
+    valueMap: {
+      [key: string]: Uniform;
+    } = {}
+  ) {
     this.valueMap = valueMap;
   }
 
@@ -37,7 +39,13 @@ class UniformSetter {
     });
   }
 
-  public render(gl: WebGLRenderingContext, renderToCanvas: boolean, time?: number, mouse?: [number, number], isHover?: boolean) {
+  public render(
+    gl: WebGLRenderingContext,
+    renderToCanvas: boolean,
+    time?: number,
+    mouse?: [number, number],
+    isHover?: boolean
+  ) {
     gl.uniform1f(this.flipYLocation, renderToCanvas ? -1 : 1);
     gl.uniform1f(this.timeLocation, time || 0);
     gl.uniform2fv(this.aspectLocation, new Vector2(gl.canvas.width, gl.canvas.height).getArray());
