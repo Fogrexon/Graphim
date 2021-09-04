@@ -1230,9 +1230,9 @@
       _classCallCheck(this, Bloom);
 
       var uniforms = {
-        'threshold': new Float(threshold),
-        'strength': new Float(strength),
-        'blur': new Float(blur)
+        threshold: new Float(threshold),
+        strength: new Float(strength),
+        blur: new Float(blur)
       };
       _this = _super.call(this, bloomFs, new UniformSetter(uniforms));
 
@@ -1264,7 +1264,7 @@
       _classCallCheck(this, Blur);
 
       var uniforms = {
-        'strength': new Float(strength)
+        strength: new Float(strength)
       };
       _this = _super.call(this, blurFs, new UniformSetter(uniforms));
 
@@ -1290,7 +1290,7 @@
       _classCallCheck(this, Pixel);
 
       var uniforms = {
-        'blockSize': new Float(blockSize)
+        blockSize: new Float(blockSize)
       };
       _this = _super.call(this, pixelFs, new UniformSetter(uniforms));
 
@@ -1316,7 +1316,7 @@
       _classCallCheck(this, FrostedGlass);
 
       var uniforms = {
-        'randomSize': new Float(randomSize)
+        randomSize: new Float(randomSize)
       };
       _this = _super.call(this, frostedFs, new UniformSetter(uniforms));
 
@@ -1482,7 +1482,7 @@
       this.canvas = document.createElement('canvas');
       copyElementAttributes(this.canvas, image);
       image.after(this.canvas);
-      image.style.display = "none";
+      image.style.display = 'none';
       this.uuid = v4(); // mouse event
 
       this.canvas.addEventListener('mouseenter', function (e) {

@@ -35,7 +35,7 @@ const linkProgram = (
 const setupRenderTexture = (
   gl: WebGLRenderingContext,
   frameBuffer: WebGLFramebuffer,
-  texture: WebGLTexture,
+  texture: WebGLTexture
 ) => {
   gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
   gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -115,8 +115,7 @@ class Filter {
   }
 
   public setShader(newShader: string, newUniforms?: UniformSetter) {
-
-    if(!this.gl || !this.program || !this.vertexShader || !this.fragmentShader) {
+    if (!this.gl || !this.program || !this.vertexShader || !this.fragmentShader) {
       console.warn('filter is not initialized.');
       return;
     }
@@ -126,18 +125,24 @@ class Filter {
 
     this.gl.linkProgram(this.program);
 
-    if(newUniforms) {
+    if (newUniforms) {
       this.uniforms = newUniforms;
     }
     this.uniforms.init(this.gl, this.program);
   }
 
-  public render({ targetTexture, renderToCanvas, time, mouse = [0, 0], isHover = false }: FilterRenderingInfo) {
+  public render({
+    targetTexture,
+    renderToCanvas,
+    time,
+    mouse = [0, 0],
+    isHover = false,
+  }: FilterRenderingInfo) {
     if (!this.gl) {
       console.error('Filter does not initialized.');
       return;
     }
-    const {gl} = this;
+    const { gl } = this;
 
     if (renderToCanvas) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -145,7 +150,17 @@ class Filter {
       // frame buffer rendering
       gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
       gl.bindTexture(gl.TEXTURE, this.targetTexture);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.canvas.width, gl.canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+      gl.texImage2D(
+        gl.TEXTURE_2D,
+        0,
+        gl.RGBA,
+        gl.canvas.width,
+        gl.canvas.height,
+        0,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
+        null
+      );
     }
 
     // set variables

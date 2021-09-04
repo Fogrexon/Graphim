@@ -18,7 +18,10 @@ const bindTexture = (gl: WebGLRenderingContext, texture: WebGLTexture, image: HT
   gl.bindTexture(gl.TEXTURE_2D, null);
 };
 
-const copyElementAttributes = (a: HTMLImageElement | HTMLCanvasElement, b: HTMLImageElement | HTMLCanvasElement) => {
+const copyElementAttributes = (
+  a: HTMLImageElement | HTMLCanvasElement,
+  b: HTMLImageElement | HTMLCanvasElement
+) => {
   a.width = b.width;
   a.height = b.height;
   b.classList.forEach((className) => {
@@ -31,10 +34,11 @@ const copyElementAttributes = (a: HTMLImageElement | HTMLCanvasElement, b: HTMLI
   Object.entries(b.dataset).forEach(([key, value]) => {
     a.setAttribute(`data-${key}`, <string>value);
   });
-}
+};
 
 class Renderer {
   private originalImage: HTMLImageElement;
+
   private image: HTMLImageElement;
 
   private canvas: HTMLCanvasElement;
@@ -48,20 +52,20 @@ class Renderer {
   private accTime: number = 0;
 
   private mouse: [number, number] = [0, 0];
-  
+
   private isHover: boolean = false;
 
   private uuid: string;
-  
+
   constructor({ image }: RendererParameter) {
     this.originalImage = image;
 
     this.image = <HTMLImageElement>image.cloneNode();
-    
+
     this.canvas = document.createElement('canvas');
     copyElementAttributes(this.canvas, image);
     image.after(this.canvas);
-    image.style.display = "none";
+    image.style.display = 'none';
     this.uuid = uuidv4();
 
     // mouse event
@@ -89,9 +93,9 @@ class Renderer {
       this.isHover = false;
       this.handlePointer(e);
     });
-    
+
     this.gl = <WebGLRenderingContext>this.canvas.getContext('webgl');
-    
+
     this.isAnimation = false;
 
     this.imageTexture = <WebGLTexture>this.gl.createTexture();
@@ -101,8 +105,10 @@ class Renderer {
   private handlePointer(e: MouseEvent | TouchEvent) {
     if (e instanceof TouchEvent) {
       const rect = (<HTMLElement>e.target).getBoundingClientRect();
-      this.mouse = [(e.touches[0].clientX - window.pageXOffset - rect.left) / this.canvas.width,
-      (e.touches[0].clientX - window.pageXOffset - rect.left) / this.canvas.height];
+      this.mouse = [
+        (e.touches[0].clientX - window.pageXOffset - rect.left) / this.canvas.width,
+        (e.touches[0].clientX - window.pageXOffset - rect.left) / this.canvas.height,
+      ];
     } else {
       this.mouse = [e.offsetX / this.canvas.width, e.offsetY / this.canvas.height];
     }
@@ -112,13 +118,12 @@ class Renderer {
     this.image.src = image.src;
     this.image.width = image.width;
     this.image.height = image.height;
-    
+
     this.image.addEventListener('load', () => {
       this.canvas.width = this.image.width;
       this.canvas.height = this.image.height;
       bindTexture(this.gl, this.imageTexture, this.image);
     });
-    
   }
 
   public release() {

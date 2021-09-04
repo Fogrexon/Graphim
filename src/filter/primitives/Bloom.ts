@@ -12,18 +12,16 @@ class Bloom extends Filter {
   public blur: Float;
 
   constructor(threshold: number, strength: number, blur: number) {
-    
     const uniforms = {
-      'threshold': new Float(threshold),
-      'strength': new Float(strength),
-      'blur': new Float(blur),
-    }
-    
+      threshold: new Float(threshold),
+      strength: new Float(strength),
+      blur: new Float(blur),
+    };
+
     super(bloomFs, new UniformSetter(uniforms));
     this.threshold = uniforms.threshold;
     this.strength = uniforms.strength;
     this.blur = uniforms.blur;
-
   }
 }
 
