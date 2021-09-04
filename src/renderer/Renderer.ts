@@ -34,6 +34,7 @@ const copyElementAttributes = (a: HTMLImageElement | HTMLCanvasElement, b: HTMLI
 }
 
 class Renderer {
+  private originalImage: HTMLImageElement;
   private image: HTMLImageElement;
 
   private canvas: HTMLCanvasElement;
@@ -53,10 +54,12 @@ class Renderer {
   private uuid: string;
   
   constructor({ image }: RendererParameter) {
-    this.image = image;
+    this.originalImage = image;
+
+    this.image = <HTMLImageElement>image.cloneNode();
     
     this.canvas = document.createElement('canvas');
-    copyElementAttributes(this.canvas, this.image);
+    copyElementAttributes(this.canvas, image);
     image.after(this.canvas);
     image.style.display = "none";
     this.uuid = uuidv4();
@@ -109,8 +112,13 @@ class Renderer {
     this.image.src = image.src;
     this.image.width = image.width;
     this.image.height = image.height;
-    this.canvas.width = this.image.width;
-    this.canvas.height = this.image.height;
+    
+    this.image.addEventListener('load', () => {
+      this.canvas.width = this.image.width;
+      this.canvas.height = this.image.height;
+      bindTexture(this.gl, this.imageTexture, this.image);
+    });
+    
   }
 
   public release() {
