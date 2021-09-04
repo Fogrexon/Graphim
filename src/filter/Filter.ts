@@ -36,13 +36,9 @@ const setupRenderTexture = (
   gl: WebGLRenderingContext,
   frameBuffer: WebGLFramebuffer,
   texture: WebGLTexture,
-  width: number,
-  height: number
 ) => {
   gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
   gl.bindTexture(gl.TEXTURE_2D, texture);
-
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
@@ -56,10 +52,6 @@ class Filter {
   private fragmentSource: string;
 
   private gl: WebGLRenderingContext | null = null;
-
-  private width: number = 0;
-
-  private height: number = 0;
 
   private framebuffer: WebGLFramebuffer | null = null;
 
@@ -75,20 +67,20 @@ class Filter {
 
   private uniforms: UniformSetter;
 
+  private initialized: string | null = null;
+
   constructor(fragmentSource: string, uniforms?: UniformSetter) {
     this.fragmentSource = fragmentSource;
     this.uniforms = uniforms || new UniformSetter({});
   }
 
-  public init(gl: WebGLRenderingContext, width: number, height: number) {
+  public init(gl: WebGLRenderingContext, uuid: string) {
     this.gl = gl;
 
     this.framebuffer = <WebGLFramebuffer>gl.createFramebuffer();
     this.targetTexture = <WebGLTexture>gl.createTexture();
-    this.width = width;
-    this.height = height;
 
-    setupRenderTexture(gl, this.framebuffer, this.targetTexture, this.width, this.height);
+    setupRenderTexture(gl, this.framebuffer, this.targetTexture);
 
     this.vertexShader = <WebGLShader>gl.createShader(gl.VERTEX_SHADER);
     this.fragmentShader = <WebGLShader>gl.createShader(gl.FRAGMENT_SHADER);
@@ -103,6 +95,12 @@ class Filter {
     this.quad.init(gl, this.program);
 
     this.uniforms.init(this.gl, this.program);
+
+    this.initialized = uuid;
+  }
+
+  public getInitializedUUID() {
+    return this.initialized;
   }
 
   public release() {
@@ -135,13 +133,19 @@ class Filter {
   }
 
   public render({ targetTexture, renderToCanvas, time, mouse = [0, 0], isHover = false }: FilterRenderingInfo) {
-    const gl = <WebGLRenderingContext>this.gl;
+    if (!this.gl) {
+      console.error('Filter does not initialized.');
+      return;
+    }
+    const {gl} = this;
 
     if (renderToCanvas) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     } else {
       // frame buffer rendering
       gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+      gl.bindTexture(gl.TEXTURE, this.targetTexture);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.canvas.width, gl.canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
     }
 
     // set variables
@@ -163,7 +167,7 @@ class Filter {
 
     gl.clearDepth(0);
     gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.viewport(0, 0, this.width, this.height);
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
     gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
 

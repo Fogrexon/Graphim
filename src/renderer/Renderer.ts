@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { v4 as uuidv4 } from 'uuid';
 import { Filter } from '../filter/Filter';
 
 interface RendererParameter {
@@ -39,25 +40,26 @@ class Renderer {
 
   private gl: WebGLRenderingContext;
 
-  private filters: Filter[];
-
-  private imageTexture: WebGLTexture | null = null;
+  private imageTexture: WebGLTexture;
 
   private isAnimation: boolean = false;
 
   private accTime: number = 0;
 
   private mouse: [number, number] = [0, 0];
-
+  
   private isHover: boolean = false;
 
+  private uuid: string;
+  
   constructor({ image }: RendererParameter) {
     this.image = image;
-
+    
     this.canvas = document.createElement('canvas');
     copyElementAttributes(this.canvas, this.image);
-    image.parentElement?.appendChild(this.canvas);
+    image.after(this.canvas);
     image.style.display = "none";
+    this.uuid = uuidv4();
 
     // mouse event
     this.canvas.addEventListener('mouseenter', (e) => {
@@ -84,11 +86,13 @@ class Renderer {
       this.isHover = false;
       this.handlePointer(e);
     });
-
+    
     this.gl = <WebGLRenderingContext>this.canvas.getContext('webgl');
-    this.filters = [];
-
+    
     this.isAnimation = false;
+
+    this.imageTexture = <WebGLTexture>this.gl.createTexture();
+    bindTexture(this.gl, this.imageTexture, this.image);
   }
 
   private handlePointer(e: MouseEvent | TouchEvent) {
@@ -101,26 +105,6 @@ class Renderer {
     }
   }
 
-  public init(filters: Filter[]) {
-    const { gl } = this;
-    this.imageTexture = <WebGLTexture>gl.createTexture();
-    bindTexture(gl, this.imageTexture, this.image);
-    this.filters = filters;
-    this.filters.forEach((filter) => {
-      filter.init(this.gl, this.canvas.width, this.canvas.height);
-    });
-  }
-
-  public resetFilter(filters: Filter[]) {
-    this.filters.forEach(filter => {
-      filter.release();
-    });
-    this.filters = filters;
-    this.filters.forEach((filter) => {
-      filter.init(this.gl, this.canvas.width, this.canvas.height);
-    });
-  }
-
   public setImage(image: HTMLImageElement) {
     this.image.src = image.src;
     this.image.width = image.width;
@@ -131,29 +115,30 @@ class Renderer {
 
   public release() {
     this.gl.deleteTexture(this.imageTexture);
-    this.filters.forEach(filter => {
-      filter.release();
-    });
     this.image.style.removeProperty('display');
     this.canvas.remove();
   }
 
-  public render(time = 0) {
+  public render(filters: Filter[], time = 0) {
     let texture = this.imageTexture;
 
-    this.filters.forEach((filter, index) => {
+    filters.forEach((filter, index) => {
+      if (this.uuid !== filter.getInitializedUUID()) {
+        filter.release();
+        filter.init(this.gl, this.uuid);
+      }
       filter.render({
         targetTexture: <WebGLTexture>texture,
-        renderToCanvas: index === this.filters.length - 1,
+        renderToCanvas: index === filters.length - 1,
         time,
         mouse: this.mouse,
         isHover: this.isHover,
       });
-      texture = filter.getRenderTexture();
+      texture = filter.getRenderTexture() || texture;
     });
   }
 
-  public animate() {
+  public animate(filters: Filter[]) {
     let start = new Date().getTime() / 1000;
     this.isAnimation = true;
 
@@ -162,7 +147,7 @@ class Renderer {
       this.accTime += now - start;
       start = now;
 
-      this.render(this.accTime);
+      this.render(filters, this.accTime);
       if (this.isAnimation) requestAnimationFrame(tick);
     };
     tick();

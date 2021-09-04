@@ -1020,10 +1020,9 @@
     gl.linkProgram(program);
   };
 
-  var setupRenderTexture = function setupRenderTexture(gl, frameBuffer, texture, width, height) {
+  var setupRenderTexture = function setupRenderTexture(gl, frameBuffer, texture) {
     gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
     gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
@@ -1040,10 +1039,6 @@
 
       _defineProperty(this, "gl", null);
 
-      _defineProperty(this, "width", 0);
-
-      _defineProperty(this, "height", 0);
-
       _defineProperty(this, "framebuffer", null);
 
       _defineProperty(this, "targetTexture", null);
@@ -1058,19 +1053,19 @@
 
       _defineProperty(this, "uniforms", void 0);
 
+      _defineProperty(this, "initialized", null);
+
       this.fragmentSource = fragmentSource;
       this.uniforms = uniforms || new UniformSetter({});
     }
 
     _createClass(Filter, [{
       key: "init",
-      value: function init(gl, width, height) {
+      value: function init(gl, uuid) {
         this.gl = gl;
         this.framebuffer = gl.createFramebuffer();
         this.targetTexture = gl.createTexture();
-        this.width = width;
-        this.height = height;
-        setupRenderTexture(gl, this.framebuffer, this.targetTexture, this.width, this.height);
+        setupRenderTexture(gl, this.framebuffer, this.targetTexture);
         this.vertexShader = gl.createShader(gl.VERTEX_SHADER);
         this.fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
         compileShader(gl, this.vertexShader, quadVertex);
@@ -1080,6 +1075,12 @@
         this.quad = new FullScreenQuad();
         this.quad.init(gl, this.program);
         this.uniforms.init(this.gl, this.program);
+        this.initialized = uuid;
+      }
+    }, {
+      key: "getInitializedUUID",
+      value: function getInitializedUUID() {
+        return this.initialized;
       }
     }, {
       key: "release",
@@ -1122,6 +1123,12 @@
             mouse = _ref$mouse === void 0 ? [0, 0] : _ref$mouse,
             _ref$isHover = _ref.isHover,
             isHover = _ref$isHover === void 0 ? false : _ref$isHover;
+
+        if (!this.gl) {
+          console.error('Filter does not initialized.');
+          return;
+        }
+
         var gl = this.gl;
 
         if (renderToCanvas) {
@@ -1129,6 +1136,8 @@
         } else {
           // frame buffer rendering
           gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+          gl.bindTexture(gl.TEXTURE, this.targetTexture);
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.canvas.width, gl.canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
         } // set variables
 
 
@@ -1145,7 +1154,7 @@
         gl.depthFunc(gl.LEQUAL);
         gl.clearDepth(0);
         gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.viewport(0, 0, this.width, this.height);
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
         gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
         gl.bindTexture(gl.TEXTURE_2D, null);
         gl.flush();
@@ -1333,6 +1342,80 @@
     FrostedGlass: FrostedGlass
   });
 
+  // Unique ID creation requires a high quality random # generator. In the browser we therefore
+  // require the crypto API and do not support built-in fallback to lower quality random number
+  // generators (like Math.random()).
+  var getRandomValues;
+  var rnds8 = new Uint8Array(16);
+  function rng() {
+    // lazy load so that environments that need to polyfill have a chance to do so
+    if (!getRandomValues) {
+      // getRandomValues needs to be invoked in a context where "this" is a Crypto implementation. Also,
+      // find the complete implementation of crypto (msCrypto) on IE11.
+      getRandomValues = typeof crypto !== 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto) || typeof msCrypto !== 'undefined' && typeof msCrypto.getRandomValues === 'function' && msCrypto.getRandomValues.bind(msCrypto);
+
+      if (!getRandomValues) {
+        throw new Error('crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported');
+      }
+    }
+
+    return getRandomValues(rnds8);
+  }
+
+  var REGEX = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i;
+
+  function validate(uuid) {
+    return typeof uuid === 'string' && REGEX.test(uuid);
+  }
+
+  /**
+   * Convert array of 16 byte values to UUID string format of the form:
+   * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+   */
+
+  var byteToHex = [];
+
+  for (var i = 0; i < 256; ++i) {
+    byteToHex.push((i + 0x100).toString(16).substr(1));
+  }
+
+  function stringify(arr) {
+    var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0; // Note: Be careful editing this code!  It's been tuned for performance
+    // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
+
+    var uuid = (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + '-' + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + '-' + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + '-' + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + '-' + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase(); // Consistency check for valid UUID.  If this throws, it's likely due to one
+    // of the following:
+    // - One or more input array values don't map to a hex octet (leading to
+    // "undefined" in the uuid)
+    // - Invalid input values for the RFC `version` or `variant` fields
+
+    if (!validate(uuid)) {
+      throw TypeError('Stringified UUID is invalid');
+    }
+
+    return uuid;
+  }
+
+  function v4(options, buf, offset) {
+    options = options || {};
+    var rnds = options.random || (options.rng || rng)(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+
+    rnds[6] = rnds[6] & 0x0f | 0x40;
+    rnds[8] = rnds[8] & 0x3f | 0x80; // Copy bytes to buffer, if provided
+
+    if (buf) {
+      offset = offset || 0;
+
+      for (var i = 0; i < 16; ++i) {
+        buf[offset + i] = rnds[i];
+      }
+
+      return buf;
+    }
+
+    return stringify(rnds);
+  }
+
   var bindTexture = function bindTexture(gl, texture, image) {
     gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
@@ -1368,8 +1451,7 @@
 
   var Renderer = /*#__PURE__*/function () {
     function Renderer(_ref5) {
-      var _image$parentElement,
-          _this = this;
+      var _this = this;
 
       var image = _ref5.image;
 
@@ -1381,9 +1463,7 @@
 
       _defineProperty(this, "gl", void 0);
 
-      _defineProperty(this, "filters", void 0);
-
-      _defineProperty(this, "imageTexture", null);
+      _defineProperty(this, "imageTexture", void 0);
 
       _defineProperty(this, "isAnimation", false);
 
@@ -1393,11 +1473,14 @@
 
       _defineProperty(this, "isHover", false);
 
+      _defineProperty(this, "uuid", void 0);
+
       this.image = image;
       this.canvas = document.createElement('canvas');
       copyElementAttributes(this.canvas, this.image);
-      (_image$parentElement = image.parentElement) === null || _image$parentElement === void 0 ? void 0 : _image$parentElement.appendChild(this.canvas);
-      image.style.display = "none"; // mouse event
+      image.after(this.canvas);
+      image.style.display = "none";
+      this.uuid = v4(); // mouse event
 
       this.canvas.addEventListener('mouseenter', function (e) {
         _this.isHover = true;
@@ -1427,8 +1510,9 @@
         _this.handlePointer(e);
       });
       this.gl = this.canvas.getContext('webgl');
-      this.filters = [];
       this.isAnimation = false;
+      this.imageTexture = this.gl.createTexture();
+      bindTexture(this.gl, this.imageTexture, this.image);
     }
 
     _createClass(Renderer, [{
@@ -1440,32 +1524,6 @@
         } else {
           this.mouse = [e.offsetX / this.canvas.width, e.offsetY / this.canvas.height];
         }
-      }
-    }, {
-      key: "init",
-      value: function init(filters) {
-        var _this2 = this;
-
-        var gl = this.gl;
-        this.imageTexture = gl.createTexture();
-        bindTexture(gl, this.imageTexture, this.image);
-        this.filters = filters;
-        this.filters.forEach(function (filter) {
-          filter.init(_this2.gl, _this2.canvas.width, _this2.canvas.height);
-        });
-      }
-    }, {
-      key: "resetFilter",
-      value: function resetFilter(filters) {
-        var _this3 = this;
-
-        this.filters.forEach(function (filter) {
-          filter.release();
-        });
-        this.filters = filters;
-        this.filters.forEach(function (filter) {
-          filter.init(_this3.gl, _this3.canvas.width, _this3.canvas.height);
-        });
       }
     }, {
       key: "setImage",
@@ -1480,46 +1538,48 @@
       key: "release",
       value: function release() {
         this.gl.deleteTexture(this.imageTexture);
-        this.filters.forEach(function (filter) {
-          filter.release();
-        });
         this.image.style.removeProperty('display');
         this.canvas.remove();
       }
     }, {
       key: "render",
-      value: function render() {
-        var _this4 = this;
+      value: function render(filters) {
+        var _this2 = this;
 
-        var time = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+        var time = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
         var texture = this.imageTexture;
-        this.filters.forEach(function (filter, index) {
+        filters.forEach(function (filter, index) {
+          if (_this2.uuid !== filter.getInitializedUUID()) {
+            filter.release();
+            filter.init(_this2.gl, _this2.uuid);
+          }
+
           filter.render({
             targetTexture: texture,
-            renderToCanvas: index === _this4.filters.length - 1,
+            renderToCanvas: index === filters.length - 1,
             time: time,
-            mouse: _this4.mouse,
-            isHover: _this4.isHover
+            mouse: _this2.mouse,
+            isHover: _this2.isHover
           });
-          texture = filter.getRenderTexture();
+          texture = filter.getRenderTexture() || texture;
         });
       }
     }, {
       key: "animate",
-      value: function animate() {
-        var _this5 = this;
+      value: function animate(filters) {
+        var _this3 = this;
 
         var start = new Date().getTime() / 1000;
         this.isAnimation = true;
 
         var tick = function tick() {
           var now = new Date().getTime() / 1000;
-          _this5.accTime += now - start;
+          _this3.accTime += now - start;
           start = now;
 
-          _this5.render(_this5.accTime);
+          _this3.render(filters, _this3.accTime);
 
-          if (_this5.isAnimation) requestAnimationFrame(tick);
+          if (_this3.isAnimation) requestAnimationFrame(tick);
         };
 
         tick();

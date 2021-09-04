@@ -19,8 +19,7 @@ img.addEventListener('load', () => {
   });
   filter = new Graphim.Primitives.Blur(5);
 
-  renderer.init([ filter ]);
-  renderer.animate();
+  renderer.animate([ filter ]);
 });
 
 document.getElementById('strength').addEventListener('change', (e) => {

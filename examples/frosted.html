@@ -19,8 +19,7 @@ img.addEventListener('load', () => {
   });
   filter = new Graphim.Primitives.FrostedGlass(3);
 
-  renderer.init([ filter ]);
-  renderer.animate();
+  renderer.animate([ filter ]);
 });
 
 document.getElementById('random-size').addEventListener('change', (e) => {

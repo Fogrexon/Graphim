@@ -49,8 +49,7 @@ img.addEventListener('load', () => {
   uni.set('power', power);
   const filter = new Graphim.Filter(shaders[0], uni);
 
-  renderer.init([ filter ]);
-  renderer.animate();
+  renderer.animate([ filter ]);
 
   // update power
   setInterval(() => {
