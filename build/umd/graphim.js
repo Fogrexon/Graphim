@@ -1095,18 +1095,20 @@
     }, {
       key: "setShader",
       value: function setShader(newShader, newUniforms) {
-        if (!this.gl || !this.program || !this.fragmentShader) {
+        if (!this.gl || !this.program || !this.vertexShader || !this.fragmentShader) {
           console.warn('filter is not initialized.');
           return;
         }
 
         this.fragmentSource = newShader;
         compileShader(this.gl, this.fragmentShader, "".concat(headVector, "\n").concat(this.fragmentSource));
+        this.gl.linkProgram(this.program);
 
         if (newUniforms) {
           this.uniforms = newUniforms;
-          this.uniforms.init(this.gl, this.program);
         }
+
+        this.uniforms.init(this.gl, this.program);
       }
     }, {
       key: "render",
@@ -1367,7 +1369,6 @@
   var Renderer = /*#__PURE__*/function () {
     function Renderer(_ref5) {
       var _image$parentElement,
-          _image$parentElement2,
           _this = this;
 
       var image = _ref5.image;
@@ -1396,7 +1397,7 @@
       this.canvas = document.createElement('canvas');
       copyElementAttributes(this.canvas, this.image);
       (_image$parentElement = image.parentElement) === null || _image$parentElement === void 0 ? void 0 : _image$parentElement.appendChild(this.canvas);
-      (_image$parentElement2 = image.parentElement) === null || _image$parentElement2 === void 0 ? void 0 : _image$parentElement2.removeChild(image); // mouse event
+      image.style.display = "none"; // mouse event
 
       this.canvas.addEventListener('mouseenter', function (e) {
         _this.isHover = true;
@@ -1467,27 +1468,22 @@
         });
       }
     }, {
-      key: "resetImage",
-      value: function resetImage(image) {
-        var _this$canvas$parentEl, _image$parentElement3, _image$parentElement4;
-
-        copyElementAttributes(this.canvas, this.image);
-        (_this$canvas$parentEl = this.canvas.parentElement) === null || _this$canvas$parentEl === void 0 ? void 0 : _this$canvas$parentEl.appendChild(this.image);
-        (_image$parentElement3 = image.parentElement) === null || _image$parentElement3 === void 0 ? void 0 : _image$parentElement3.appendChild(this.canvas);
-        (_image$parentElement4 = image.parentElement) === null || _image$parentElement4 === void 0 ? void 0 : _image$parentElement4.removeChild(image);
-        this.image = image;
-        if (this.imageTexture) bindTexture(this.gl, this.imageTexture, this.image);
+      key: "setImage",
+      value: function setImage(image) {
+        this.image.src = image.src;
+        this.image.width = image.width;
+        this.image.height = image.height;
+        this.canvas.width = this.image.width;
+        this.canvas.height = this.image.height;
       }
     }, {
       key: "release",
       value: function release() {
-        var _this$canvas$parentEl2;
-
         this.gl.deleteTexture(this.imageTexture);
         this.filters.forEach(function (filter) {
           filter.release();
         });
-        (_this$canvas$parentEl2 = this.canvas.parentElement) === null || _this$canvas$parentEl2 === void 0 ? void 0 : _this$canvas$parentEl2.appendChild(this.image);
+        this.image.style.removeProperty('display');
         this.canvas.remove();
       }
     }, {

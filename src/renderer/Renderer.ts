@@ -57,7 +57,7 @@ class Renderer {
     this.canvas = document.createElement('canvas');
     copyElementAttributes(this.canvas, this.image);
     image.parentElement?.appendChild(this.canvas);
-    image.parentElement?.removeChild(image);
+    image.style.display = "none";
 
     // mouse event
     this.canvas.addEventListener('mouseenter', (e) => {
@@ -121,13 +121,12 @@ class Renderer {
     });
   }
 
-  public resetImage(image: HTMLImageElement) {
-    copyElementAttributes(this.canvas, this.image);
-    this.canvas.parentElement?.appendChild(this.image);
-    image.parentElement?.appendChild(this.canvas);
-    image.parentElement?.removeChild(image);
-    this.image = image;
-    if(this.imageTexture) bindTexture(this.gl, this.imageTexture, this.image);
+  public setImage(image: HTMLImageElement) {
+    this.image.src = image.src;
+    this.image.width = image.width;
+    this.image.height = image.height;
+    this.canvas.width = this.image.width;
+    this.canvas.height = this.image.height;
   }
 
   public release() {
@@ -135,7 +134,7 @@ class Renderer {
     this.filters.forEach(filter => {
       filter.release();
     });
-    this.canvas.parentElement?.appendChild(this.image);
+    this.image.style.removeProperty('display');
     this.canvas.remove();
   }
 

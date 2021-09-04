@@ -118,7 +118,7 @@ class Filter {
 
   public setShader(newShader: string, newUniforms?: UniformSetter) {
 
-    if(!this.gl || !this.program || !this.fragmentShader) {
+    if(!this.gl || !this.program || !this.vertexShader || !this.fragmentShader) {
       console.warn('filter is not initialized.');
       return;
     }
@@ -126,10 +126,12 @@ class Filter {
     this.fragmentSource = newShader;
     compileShader(this.gl, this.fragmentShader, `${headVector}\n${this.fragmentSource}`);
 
+    this.gl.linkProgram(this.program);
+
     if(newUniforms) {
       this.uniforms = newUniforms;
-      this.uniforms.init(this.gl, this.program);
     }
+    this.uniforms.init(this.gl, this.program);
   }
 
   public render({ targetTexture, renderToCanvas, time, mouse = [0, 0], isHover = false }: FilterRenderingInfo) {
