@@ -116,6 +116,22 @@ class Filter {
     this.quad.release(this.gl);
   }
 
+  public setShader(newShader: string, newUniforms?: UniformSetter) {
+
+    if(!this.gl || !this.program || !this.fragmentShader) {
+      console.warn('filter is not initialized.');
+      return;
+    }
+
+    this.fragmentSource = newShader;
+    compileShader(this.gl, this.fragmentShader, `${headVector}\n${this.fragmentSource}`);
+
+    if(newUniforms) {
+      this.uniforms = newUniforms;
+      this.uniforms.init(this.gl, this.program);
+    }
+  }
+
   public render({ targetTexture, renderToCanvas, time, mouse = [0, 0], isHover = false }: FilterRenderingInfo) {
     const gl = <WebGLRenderingContext>this.gl;
 

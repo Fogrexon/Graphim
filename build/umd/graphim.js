@@ -1093,6 +1093,22 @@
         this.quad.release(this.gl);
       }
     }, {
+      key: "setShader",
+      value: function setShader(newShader, newUniforms) {
+        if (!this.gl || !this.program || !this.fragmentShader) {
+          console.warn('filter is not initialized.');
+          return;
+        }
+
+        this.fragmentSource = newShader;
+        compileShader(this.gl, this.fragmentShader, "".concat(headVector, "\n").concat(this.fragmentSource));
+
+        if (newUniforms) {
+          this.uniforms = newUniforms;
+          this.uniforms.init(this.gl, this.program);
+        }
+      }
+    }, {
       key: "render",
       value: function render(_ref) {
         var _this$quad;
