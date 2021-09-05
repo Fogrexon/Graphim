@@ -32,7 +32,7 @@ export default [
       typescript({
         declaration: true,
         rootDir: 'src',
-        declarationDir: 'build/commonjs/types',
+        declarationDir: 'build/commonjs/src',
       }),
     ],
   },
@@ -58,7 +58,7 @@ export default [
       typescript({
         declaration: true,
         rootDir: 'src',
-        declarationDir: 'build/es/types',
+        declarationDir: 'build/es/src',
       }),
       glslify(),
     ],
