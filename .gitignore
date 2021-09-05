@@ -105,4 +105,4 @@ dist
 
 # Rollup Build files
 build/commonjs/
-build/es6/
+build/es/
