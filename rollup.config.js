@@ -2,7 +2,6 @@ import babel from '@rollup/plugin-babel';
 import glslify from 'rollup-plugin-glslify';
 import postcss from 'rollup-plugin-postcss';
 import typescript from '@rollup/plugin-typescript';
-import nodePolyfills from 'rollup-plugin-node-polyfills';
 import nodeResolve from 'rollup-plugin-node-resolve';
 
 const extensions = ['.ts', '.js'];
@@ -22,7 +21,6 @@ export default [
     },
 
     plugins: [
-      nodePolyfills(),
       nodeResolve({browser: true}),
       glslify(),
       postcss({
@@ -34,7 +32,7 @@ export default [
       typescript({
         declaration: true,
         rootDir: 'src',
-        declarationDir: 'build/commonjs',
+        declarationDir: 'build/commonjs/types',
       }),
     ],
   },
@@ -50,7 +48,6 @@ export default [
     },
 
     plugins: [
-      nodePolyfills(),
       nodeResolve({browser: true}),
       postcss({
         extract: true,
@@ -61,7 +58,7 @@ export default [
       typescript({
         declaration: true,
         rootDir: 'src',
-        declarationDir: 'build/es6',
+        declarationDir: 'build/es6/types',
       }),
       glslify(),
     ],
@@ -77,7 +74,6 @@ export default [
       sourcemap: true,
     },
     plugins: [
-      nodePolyfills(),
       nodeResolve({browser: true}),
       postcss({
         extract: true,
