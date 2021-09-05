@@ -1478,7 +1478,7 @@
       _defineProperty(this, "uuid", void 0);
 
       this.originalImage = image;
-      this.image = image.cloneNode();
+      this.image = image;
       this.canvas = document.createElement('canvas');
       copyElementAttributes(this.canvas, image);
       image.after(this.canvas);
@@ -1531,16 +1531,13 @@
     }, {
       key: "setImage",
       value: function setImage(image) {
-        var _this2 = this;
-
-        this.image.src = image.src;
-        this.image.width = image.width;
-        this.image.height = image.height;
-        this.image.addEventListener('load', function () {
-          _this2.canvas.width = _this2.image.width;
-          _this2.canvas.height = _this2.image.height;
-          bindTexture(_this2.gl, _this2.imageTexture, _this2.image);
-        });
+        this.image = image;
+        this.originalImage.src = image.src;
+        this.originalImage.width = image.width;
+        this.originalImage.height = image.height;
+        this.canvas.width = image.width;
+        this.canvas.height = image.height;
+        bindTexture(this.gl, this.imageTexture, this.image);
       }
     }, {
       key: "release",
@@ -1552,22 +1549,22 @@
     }, {
       key: "render",
       value: function render(filters) {
-        var _this3 = this;
+        var _this2 = this;
 
         var time = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
         var texture = this.imageTexture;
         filters.forEach(function (filter, index) {
-          if (_this3.uuid !== filter.getInitializedUUID()) {
+          if (_this2.uuid !== filter.getInitializedUUID()) {
             filter.release();
-            filter.init(_this3.gl, _this3.uuid);
+            filter.init(_this2.gl, _this2.uuid);
           }
 
           filter.render({
             targetTexture: texture,
             renderToCanvas: index === filters.length - 1,
             time: time,
-            mouse: _this3.mouse,
-            isHover: _this3.isHover
+            mouse: _this2.mouse,
+            isHover: _this2.isHover
           });
           texture = filter.getRenderTexture() || texture;
         });
@@ -1575,19 +1572,19 @@
     }, {
       key: "animate",
       value: function animate(filters) {
-        var _this4 = this;
+        var _this3 = this;
 
         var start = new Date().getTime() / 1000;
         this.isAnimation = true;
 
         var tick = function tick() {
           var now = new Date().getTime() / 1000;
-          _this4.accTime += now - start;
+          _this3.accTime += now - start;
           start = now;
 
-          _this4.render(filters, _this4.accTime);
+          _this3.render(filters, _this3.accTime);
 
-          if (_this4.isAnimation) requestAnimationFrame(tick);
+          if (_this3.isAnimation) requestAnimationFrame(tick);
         };
 
         tick();
