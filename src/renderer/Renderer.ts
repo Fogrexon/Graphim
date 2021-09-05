@@ -60,7 +60,7 @@ class Renderer {
   constructor({ image }: RendererParameter) {
     this.originalImage = image;
 
-    this.image = <HTMLImageElement>image.cloneNode();
+    this.image = image;
 
     this.canvas = document.createElement('canvas');
     copyElementAttributes(this.canvas, image);
@@ -115,15 +115,13 @@ class Renderer {
   }
 
   public setImage(image: HTMLImageElement) {
-    this.image.src = image.src;
-    this.image.width = image.width;
-    this.image.height = image.height;
-
-    this.image.addEventListener('load', () => {
-      this.canvas.width = this.image.width;
-      this.canvas.height = this.image.height;
-      bindTexture(this.gl, this.imageTexture, this.image);
-    });
+    this.image = image;
+    this.originalImage.src = image.src;
+    this.originalImage.width = image.width;
+    this.originalImage.height = image.height;
+    this.canvas.width = image.width;
+    this.canvas.height = image.height;
+    bindTexture(this.gl, this.imageTexture, this.image);
   }
 
   public release() {
