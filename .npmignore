@@ -1,0 +1,8 @@
+.eslintrc.js
+.prettierrc
+index.html
+rollup.config.js
+tsconfig.json
+examples/
+src/
+.github/
