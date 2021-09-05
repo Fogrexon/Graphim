@@ -41,7 +41,7 @@ export default [
     input: 'src/index.ts',
     preserveModules: true,
     output: {
-      dir: 'build/es6',
+      dir: 'build/es',
       format: 'es',
       exports: 'named',
       sourcemap: true,
@@ -58,7 +58,7 @@ export default [
       typescript({
         declaration: true,
         rootDir: 'src',
-        declarationDir: 'build/es6/types',
+        declarationDir: 'build/es/types',
       }),
       glslify(),
     ],
