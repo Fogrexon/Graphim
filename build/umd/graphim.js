@@ -1578,13 +1578,14 @@
         this.isAnimation = true;
 
         var tick = function tick() {
+          if (!_this3.isAnimation) return;
           var now = new Date().getTime() / 1000;
           _this3.accTime += now - start;
           start = now;
 
           _this3.render(filters, _this3.accTime);
 
-          if (_this3.isAnimation) requestAnimationFrame(tick);
+          requestAnimationFrame(tick);
         };
 
         tick();
