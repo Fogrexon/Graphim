@@ -154,12 +154,13 @@ class Renderer {
     this.isAnimation = true;
 
     const tick = () => {
+      if (!this.isAnimation) return;
       const now = new Date().getTime() / 1000;
       this.accTime += now - start;
       start = now;
 
       this.render(filters, this.accTime);
-      if (this.isAnimation) requestAnimationFrame(tick);
+      requestAnimationFrame(tick);
     };
     tick();
   }
