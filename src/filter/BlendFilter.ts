@@ -1,13 +1,13 @@
 import headVector from './glsl/default.fs';
 import { UniformSetter } from './UniformSetter';
-import { GraphimNode, RenderSetting } from './GraphimNode';
+import { CanvasID, GraphimNode, RenderSetting } from './GraphimNode';
 import { compileShader } from './utils';
 import { BlendNode } from './BlendNode';
 
 export class Filter extends BlendNode {
 
-  public init(gl: WebGLRenderingContext) {
-    super.init(gl);
+  public init(gl: WebGLRenderingContext, canvasID: CanvasID) {
+    super.init(gl, canvasID);
 
   }
 
@@ -29,17 +29,21 @@ export class Filter extends BlendNode {
   }
 
   public render(setting: RenderSetting) {
-    if (!this.gl || !this.initialized || setting.gl.canvas.dataset.uuid !== this.gl?.canvas.dataset.uuid) {
-      throw new Error('RenderingContext is not initialized.');
+    if (!this.gl || !this.initialized || setting.canvasID !== this.initialized) {
+      this.init(setting.gl, setting.canvasID);
+      if(!this.gl) throw new Error('gl is not initialized');
     }
     if (this.renderResult.renderID === setting.renderID) return;
-  
+
+    const {renderToCanvas} = setting;
+    // eslint-disable-next-line no-param-reassign
+    setting.renderToCanvas = false;
+    
     this.inputNode?.render(setting);
     this.inputNode2?.render(setting);
 
     const { gl } = this;
     const {
-      renderToCanvas,
       time: uniformTime,
       mouse: uniformMouse,
       isHover: uniformIsHover

@@ -1,11 +1,12 @@
-import { UniformSetter } from "..";
+/* eslint-disable no-unused-vars */
+import { UniformSetter } from "./UniformSetter";
 import { FullScreenQuad } from "./FullScreenQuad";
 import { compileShader, linkProgram, setupRenderTexture } from "./utils";
 import quadVertex from './glsl/quad.vs';
-import headVector from './glsl/variables.fs';
+import headVector from './glsl/variable.fs';
 
-/* eslint-disable no-unused-vars */
 export type RenderID = string;
+export type CanvasID = string;
 
 export interface ForwardingData {
   targetTexture: WebGLTexture | null;
@@ -14,6 +15,7 @@ export interface ForwardingData {
 
 export interface RenderSetting {
   renderID: RenderID;
+  canvasID: CanvasID;
   renderToCanvas: boolean;
   time: number;
   mouse: [number, number];
@@ -56,9 +58,9 @@ export abstract class GraphimNode {
     this.uniforms = uniforms || new UniformSetter({});
   }
 
-  public init(gl: WebGLRenderingContext) {
+  public init(gl: WebGLRenderingContext, canvasID: CanvasID) {
     if(this.initialized) this.release();
-    this.initialized = gl.canvas.dataset.uuid as string;
+    this.initialized = canvasID;
     this.gl = gl;
 
     this.framebuffer = <WebGLFramebuffer>gl.createFramebuffer();
@@ -94,6 +96,7 @@ export abstract class GraphimNode {
     this.initialized = "";
   }
 
+  // eslint-disable-next-line no-unused-vars
   public abstract render(setting: RenderSetting): void;
 
   public getRenderResult(): ForwardingData {

@@ -1,5 +1,5 @@
 import defaultFs from './glsl/default.fs';
-import { ForwardingData, GraphimNode, RenderSetting } from './GraphimNode';
+import { CanvasID, ForwardingData, GraphimNode, RenderSetting } from './GraphimNode';
 import { MiddleNode } from './MiddleNode';
 import { setupRenderTexture } from './utils';
 
@@ -17,8 +17,8 @@ export class DelayNode extends MiddleNode {
     super(defaultFs);
   }
 
-  public init(gl: WebGLRenderingContext) {
-    super.init(gl);
+  public init(gl: WebGLRenderingContext, canvasID: CanvasID) {
+    super.init(gl, canvasID);
 
     this.framebuffer2 = <WebGLFramebuffer>gl.createFramebuffer();
     this.renderResult2.targetTexture = <WebGLTexture>gl.createTexture();
@@ -26,17 +26,21 @@ export class DelayNode extends MiddleNode {
   }
 
   public render(setting: RenderSetting) {
-    if (!this.gl || !this.initialized || setting.gl.canvas.dataset.uuid !== this.gl?.canvas.dataset.uuid) {
-      throw new Error('RenderingContext is not initialized.');
+    if (!this.gl || !this.initialized || setting.canvasID !== this.initialized) {
+      this.init(setting.gl, setting.canvasID);
+      if(!this.gl) throw new Error('gl is not initialized');
     }
     if (this.getRenderResult().renderID === setting.renderID) return;
     this.getRenderResult().renderID = setting.renderID;
+
+    const {renderToCanvas} = setting;
+    // eslint-disable-next-line no-param-reassign
+    setting.renderToCanvas = false;
 
     this.inputNode?.render(setting);
 
     const { gl } = this;
     const {
-      renderToCanvas,
       time: uniformTime,
       mouse: uniformMouse,
       isHover: uniformIsHover

@@ -8,14 +8,19 @@ export abstract class DefaultInput extends GraphimNode {
   }
 
   public render(setting: RenderSetting): void {
-    if (!this.gl || !this.initialized || setting.gl.canvas.dataset.uuid !== this.gl?.canvas.dataset.uuid) {
-      throw new Error('RenderingContext is not initialized.');
+    if (!this.gl || !this.initialized || setting.canvasID !== this.initialized) {
+      this.init(setting.gl, setting.canvasID);
+      if(!this.gl) throw new Error('gl is not initialized');
     }
     if (this.renderResult.renderID === setting.renderID) return;
+
+    const {renderToCanvas} = setting;
+    // eslint-disable-next-line no-param-reassign
+    setting.renderToCanvas = false;
+
     const { gl } = this;
     const {
       inputTexture,
-      renderToCanvas,
       time: uniformTime,
       mouse: uniformMouse,
       isHover: uniformIsHover,

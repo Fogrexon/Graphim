@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { v4 as uuidv4 } from 'uuid';
-import { Filter } from '../filter/Filter';
+import { GraphimNode, RenderSetting } from '../filter/GraphimNode';
 
 interface RendererParameter {
   image: HTMLImageElement;
@@ -55,7 +55,7 @@ class Renderer {
 
   private isHover: boolean = false;
 
-  private uuid: string;
+  private canvasID: string;
 
   constructor({ image }: RendererParameter) {
     this.originalImage = image;
@@ -64,9 +64,10 @@ class Renderer {
 
     this.canvas = document.createElement('canvas');
     copyElementAttributes(this.canvas, image);
+    this.canvasID = uuidv4();
+
     image.after(this.canvas);
     image.style.display = 'none';
-    this.uuid = uuidv4();
 
     // mouse event
     this.canvas.addEventListener('mouseenter', (e) => {
@@ -130,26 +131,22 @@ class Renderer {
     this.canvas.remove();
   }
 
-  public render(filters: Filter[], time = 0) {
-    let texture = this.imageTexture;
+  public render(filters: GraphimNode, time = 0) {
+    const renderData: RenderSetting = {
+      inputTexture: this.imageTexture,
+      renderID: uuidv4(),
+      canvasID: uuidv4(),
+      renderToCanvas: true,
+      time,
+      mouse: this.mouse,
+      isHover: this.isHover,
+      gl: this.gl,
+    }
 
-    filters.forEach((filter, index) => {
-      if (this.uuid !== filter.getInitializedUUID()) {
-        filter.release();
-        filter.init(this.gl, this.uuid);
-      }
-      filter.render({
-        targetTexture: <WebGLTexture>texture,
-        renderToCanvas: index === filters.length - 1,
-        time,
-        mouse: this.mouse,
-        isHover: this.isHover,
-      });
-      texture = filter.getRenderTexture() || texture;
-    });
+    filters.render(renderData);
   }
 
-  public animate(filters: Filter[]) {
+  public animate(filters: GraphimNode) {
     let start = new Date().getTime() / 1000;
     this.isAnimation = true;
 

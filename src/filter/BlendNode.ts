@@ -1,12 +1,12 @@
-import { GraphimNode } from './GraphimNode';
+import { CanvasID, GraphimNode } from './GraphimNode';
 
 export abstract class BlendNode extends GraphimNode {
   protected inputNode2: GraphimNode | null = null;
 
   protected inputTextureLocation2: WebGLUniformLocation | null = null;
 
-  public init(gl: WebGLRenderingContext) {
-    super.init(gl);
+  public init(gl: WebGLRenderingContext, canvasID: CanvasID) {
+    super.init(gl, canvasID);
 
     this.inputTextureLocation2 = gl.getUniformLocation(<WebGLProgram>this.program, 'targetTexture2');
   }
