@@ -1,16 +1,10 @@
 import headVector from './glsl/default.fs';
 import { UniformSetter } from './UniformSetter';
-import { CanvasID, GraphimNode, RenderSetting } from './GraphimNode';
+import { GraphimNode, RenderSetting } from './GraphimNode';
 import { compileShader } from '../utils';
 import { BlendNode } from './BlendNode';
 
 export class BlendFilter extends BlendNode {
-
-  public init(gl: WebGLRenderingContext, canvasID: CanvasID) {
-    super.init(gl, canvasID);
-
-  }
-
   public setShader(newShader: string, newUniforms?: UniformSetter) {
     if (!this.gl || !this.program || !this.vertexShader || !this.fragmentShader) {
       console.warn('filter is not initialized.');

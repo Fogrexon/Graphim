@@ -25,6 +25,12 @@ export class DelayNode extends MiddleNode {
     setupRenderTexture(gl, this.framebuffer2, this.renderResult2.targetTexture);
   }
 
+  public release() {
+    super.release();
+    this.gl?.deleteFramebuffer(this.framebuffer2);
+    this.gl?.deleteFramebuffer(this.renderResult2.targetTexture);
+  }
+
   public render(setting: RenderSetting) {
     if (!this.gl || !this.initialized || setting.canvasID !== this.initialized) {
       this.init(setting.gl, setting.canvasID);
