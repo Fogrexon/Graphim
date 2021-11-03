@@ -96,7 +96,7 @@ export abstract class GraphimNode {
 
   public abstract render(setting: RenderSetting): void;
 
-  public GetRenderResult(): ForwardingData {
+  public getRenderResult(): ForwardingData {
     return this.renderResult;
   };
 

@@ -44,8 +44,8 @@ export class Filter extends BlendNode {
       mouse: uniformMouse,
       isHover: uniformIsHover
     } = setting;
-    const { targetTexture: inputTexture } = (this.inputNode as GraphimNode).GetRenderResult();
-    const { targetTexture: inputTexture2 } = (this.inputNode2 as GraphimNode).GetRenderResult();
+    const { targetTexture: inputTexture } = (this.inputNode as GraphimNode).getRenderResult();
+    const { targetTexture: inputTexture2 } = (this.inputNode2 as GraphimNode).getRenderResult();
 
     if (renderToCanvas) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
