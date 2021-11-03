@@ -2,7 +2,7 @@ import { UniformSetter } from "..";
 import { FullScreenQuad } from "./FullScreenQuad";
 import { compileShader, linkProgram, setupRenderTexture } from "./utils";
 import quadVertex from './glsl/quad.vs';
-import headVector from './glsl/default.fs';
+import headVector from './glsl/variables.fs';
 
 /* eslint-disable no-unused-vars */
 export type RenderID = string;
@@ -44,6 +44,8 @@ export abstract class GraphimNode {
 
   protected uniforms: UniformSetter | null = null;
 
+  protected inputTextureLocation: WebGLUniformLocation | null = null;
+
   // intput and output
   protected outputNode: GraphimNode[] = [];
 
@@ -55,6 +57,7 @@ export abstract class GraphimNode {
   }
 
   public init(gl: WebGLRenderingContext) {
+    if(this.initialized) this.release();
     this.initialized = gl.canvas.dataset.uuid as string;
     this.gl = gl;
 
@@ -76,16 +79,19 @@ export abstract class GraphimNode {
     this.quad.init(gl, this.program);
 
     this.uniforms?.init(this.gl, this.program);
+
+    this.inputTextureLocation = gl.getUniformLocation(<WebGLProgram>this.program, 'targetTexture');
   }
 
   public release() {
-    if (!this.gl || !this.quad) return;
-    this.gl.deleteFramebuffer(this.framebuffer);
-    this.gl.deleteShader(this.vertexShader);
-    this.gl.deleteShader(this.fragmentShader);
-    this.gl.deleteProgram(this.program);
+    if (!this.initialized) return;
+    this.gl?.deleteFramebuffer(this.framebuffer);
+    this.gl?.deleteShader(this.vertexShader);
+    this.gl?.deleteShader(this.fragmentShader);
+    this.gl?.deleteProgram(this.program);
 
-    this.quad.release(this.gl);
+    this.quad?.release(this.gl as WebGLRenderingContext);
+    this.initialized = "";
   }
 
   public abstract render(setting: RenderSetting): void;

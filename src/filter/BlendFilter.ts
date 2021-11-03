@@ -2,16 +2,13 @@ import headVector from './glsl/default.fs';
 import { UniformSetter } from './UniformSetter';
 import { GraphimNode, RenderSetting } from './GraphimNode';
 import { compileShader } from './utils';
-import { MiddleNode } from './MiddleNode';
+import { BlendNode } from './BlendNode';
 
-export class Filter extends MiddleNode {
+export class Filter extends BlendNode {
 
   public init(gl: WebGLRenderingContext) {
     super.init(gl);
-  }
 
-  public getInitializedUUID() {
-    return this.initialized;
   }
 
   public setShader(newShader: string, newUniforms?: UniformSetter) {
@@ -36,9 +33,9 @@ export class Filter extends MiddleNode {
       throw new Error('RenderingContext is not initialized.');
     }
     if (this.renderResult.renderID === setting.renderID) return;
-    this.renderResult.renderID = setting.renderID;
   
     this.inputNode?.render(setting);
+    this.inputNode2?.render(setting);
 
     const { gl } = this;
     const {
@@ -48,6 +45,7 @@ export class Filter extends MiddleNode {
       isHover: uniformIsHover
     } = setting;
     const { targetTexture: inputTexture } = (this.inputNode as GraphimNode).GetRenderResult();
+    const { targetTexture: inputTexture2 } = (this.inputNode2 as GraphimNode).GetRenderResult();
 
     if (renderToCanvas) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -75,8 +73,14 @@ export class Filter extends MiddleNode {
 
     // set render texture
     gl.bindTexture(gl.TEXTURE_2D, inputTexture);
-
     gl.uniform1i(this.inputTextureLocation, 0);
+  
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, inputTexture2);
+    gl.uniform1i(this.inputTextureLocation2, 1);
+
+    // set default active texture (0)
+    gl.activeTexture(gl.TEXTURE0)
 
     // render
     gl.clearColor(0.5, 0.5, 0.5, 1.0);

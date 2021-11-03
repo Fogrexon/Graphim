@@ -1,53 +1,25 @@
-import headVector from './glsl/default.fs';
-import { UniformSetter } from './UniformSetter';
-import { GraphimNode, RenderSetting } from './GraphimNode';
-import { compileShader } from './utils';
-import { MiddleNode } from './MiddleNode';
+import { GraphimNode, RenderSetting } from "./GraphimNode";
+import defaultFs from './glsl/default.fs';
 
-export class Filter extends MiddleNode {
+export abstract class DefaultInput extends GraphimNode {
 
-  public init(gl: WebGLRenderingContext) {
-    super.init(gl);
+  constructor() {
+    super(defaultFs);
   }
 
-  public getInitializedUUID() {
-    return this.initialized;
-  }
-
-  public setShader(newShader: string, newUniforms?: UniformSetter) {
-    if (!this.gl || !this.program || !this.vertexShader || !this.fragmentShader) {
-      console.warn('filter is not initialized.');
-      return;
-    }
-
-    this.fragmentSource = newShader;
-    compileShader(this.gl, this.fragmentShader, `${headVector}\n${this.fragmentSource}`);
-
-    this.gl.linkProgram(this.program);
-
-    if (newUniforms) {
-      this.uniforms = newUniforms;
-    }
-    this.uniforms?.init(this.gl, this.program);
-  }
-
-  public render(setting: RenderSetting) {
+  public render(setting: RenderSetting): void {
     if (!this.gl || !this.initialized || setting.gl.canvas.dataset.uuid !== this.gl?.canvas.dataset.uuid) {
       throw new Error('RenderingContext is not initialized.');
     }
     if (this.renderResult.renderID === setting.renderID) return;
-    this.renderResult.renderID = setting.renderID;
-  
-    this.inputNode?.render(setting);
-
     const { gl } = this;
     const {
+      inputTexture,
       renderToCanvas,
       time: uniformTime,
       mouse: uniformMouse,
-      isHover: uniformIsHover
+      isHover: uniformIsHover,
     } = setting;
-    const { targetTexture: inputTexture } = (this.inputNode as GraphimNode).GetRenderResult();
 
     if (renderToCanvas) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -76,7 +48,9 @@ export class Filter extends MiddleNode {
     // set render texture
     gl.bindTexture(gl.TEXTURE_2D, inputTexture);
 
-    gl.uniform1i(this.inputTextureLocation, 0);
+    const prevTextureLocation = gl.getUniformLocation(<WebGLProgram>this.program, 'targetTexture');
+
+    gl.uniform1i(prevTextureLocation, 0);
 
     // render
     gl.clearColor(0.5, 0.5, 0.5, 1.0);
