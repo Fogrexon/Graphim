@@ -53,9 +53,7 @@ export abstract class DefaultInput extends GraphimNode {
     // set render texture
     gl.bindTexture(gl.TEXTURE_2D, inputTexture);
 
-    const prevTextureLocation = gl.getUniformLocation(<WebGLProgram>this.program, 'targetTexture');
-
-    gl.uniform1i(prevTextureLocation, 0);
+    gl.uniform1i(this.inputTextureLocation, 0);
 
     // render
     gl.clearColor(0.5, 0.5, 0.5, 1.0);

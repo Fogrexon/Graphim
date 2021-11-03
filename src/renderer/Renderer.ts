@@ -135,7 +135,7 @@ class Renderer {
     const renderData: RenderSetting = {
       inputTexture: this.imageTexture,
       renderID: uuidv4(),
-      canvasID: uuidv4(),
+      canvasID: this.canvasID,
       renderToCanvas: true,
       time,
       mouse: this.mouse,
