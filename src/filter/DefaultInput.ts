@@ -31,17 +31,12 @@ export abstract class DefaultInput extends GraphimNode {
     } else {
       // frame buffer rendering
       gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
-      gl.bindTexture(gl.TEXTURE, this.renderResult.targetTexture);
-      gl.texImage2D(
+      gl.framebufferTexture2D(
+        gl.FRAMEBUFFER,
+        gl.COLOR_ATTACHMENT0,
         gl.TEXTURE_2D,
-        0,
-        gl.RGBA,
-        gl.canvas.width,
-        gl.canvas.height,
-        0,
-        gl.RGBA,
-        gl.UNSIGNED_BYTE,
-        null
+        this.renderResult.targetTexture,
+        0
       );
     }
 
