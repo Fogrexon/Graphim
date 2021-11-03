@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { UniformSetter } from "./UniformSetter";
 import { FullScreenQuad } from "./FullScreenQuad";
-import { compileShader, linkProgram, setupRenderTexture } from "./utils";
+import { compileShader, linkProgram, setupRenderTexture } from "../utils";
 import quadVertex from './glsl/quad.vs';
 import headVector from './glsl/variable.fs';
 
@@ -88,6 +88,7 @@ export abstract class GraphimNode {
   public release() {
     if (!this.initialized) return;
     this.gl?.deleteFramebuffer(this.framebuffer);
+    this.gl?.deleteTexture(this.renderResult.targetTexture);
     this.gl?.deleteShader(this.vertexShader);
     this.gl?.deleteShader(this.fragmentShader);
     this.gl?.deleteProgram(this.program);

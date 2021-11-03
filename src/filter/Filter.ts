@@ -1,7 +1,7 @@
 import headVector from './glsl/default.fs';
 import { UniformSetter } from './UniformSetter';
 import { CanvasID, GraphimNode, RenderSetting } from './GraphimNode';
-import { compileShader } from './utils';
+import { compileShader } from '../utils';
 import { MiddleNode } from './MiddleNode';
 
 export class Filter extends MiddleNode {
