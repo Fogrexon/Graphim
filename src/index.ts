@@ -1,6 +1,7 @@
 // filter nodes
 export { GraphimNode, RenderID, CanvasID, ForwardingData, RenderSetting } from './filter/GraphimNode';
 export { DefaultInput } from './filter/DefaultInput'
+export { CustomInput } from './filter/CustomInput'
 export { MiddleNode } from './filter/MiddleNode';
 export { Filter } from './filter/Filter';
 export { BlendNode } from './filter/BlendNode';

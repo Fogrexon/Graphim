@@ -1,7 +1,7 @@
 import headVector from './glsl/default.fs';
 import { UniformSetter } from './UniformSetter';
 import { CanvasID, GraphimNode, RenderSetting } from './GraphimNode';
-import { compileShader } from './utils';
+import { compileShader } from '../utils';
 import { BlendNode } from './BlendNode';
 
 export class BlendFilter extends BlendNode {

@@ -1,7 +1,7 @@
 import defaultFs from './glsl/default.fs';
 import { CanvasID, ForwardingData, GraphimNode, RenderSetting } from './GraphimNode';
 import { MiddleNode } from './MiddleNode';
-import { setupRenderTexture } from './utils';
+import { setupRenderTexture } from '../utils';
 
 export class DelayNode extends MiddleNode {
   private resultSwitch = 0;
