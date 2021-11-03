@@ -4,7 +4,7 @@ import { CanvasID, GraphimNode, RenderSetting } from './GraphimNode';
 import { compileShader } from './utils';
 import { BlendNode } from './BlendNode';
 
-export class Filter extends BlendNode {
+export class BlendFilter extends BlendNode {
 
   public init(gl: WebGLRenderingContext, canvasID: CanvasID) {
     super.init(gl, canvasID);
