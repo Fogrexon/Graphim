@@ -6,4 +6,10 @@ export abstract class MiddleNode extends GraphimNode {
     this.inputNode = inputNode;
     this.inputNode.setOutputNode(this);
   }
+
+  public disconnect() {
+    if (!this.inputNode) return;
+    this.inputNode.removeOutputNode(this);
+    this.inputNode = null;
+  }
 }
