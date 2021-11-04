@@ -27,7 +27,10 @@ void main(void) {
 }
   `, uni);
 
-  renderer.animate([ filter ]);
+  const input = new Graphim.DefaultInput();
+
+  filter.connect(input);
+  renderer.animate(filter);
 
   // update power
   setInterval(() => {

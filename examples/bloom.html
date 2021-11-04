@@ -13,7 +13,7 @@
     threshold: <input type="range" min=0 max=1 value=0.5 id="threshold" step="0.01" />
   </div>
   <script>
-    let filter;
+let filter;
 const img = document.getElementsByTagName("img")[0];
 img.addEventListener('load', () => {
   const renderer = new Graphim.Renderer({
@@ -21,12 +21,15 @@ img.addEventListener('load', () => {
   });
   filter = new Graphim.Primitives.Bloom(0.5, 3, 40);
 
-  renderer.animate([ filter ]);
+  const input = new Graphim.DefaultInput();
+
+  filter.connect(input);
+  renderer.animate(filter);
 });
 
 document.getElementById('threshold').addEventListener('change', (e) => {
   filter.uniforms.valueMap.threshold.set(e.target.value)
-})
+});
   </script>
 </body>
 </html>

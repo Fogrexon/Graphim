@@ -16,8 +16,10 @@ img.addEventListener('load', () => {
     image: img,
   });
   const filter = new Graphim.Primitives.Sepia();
+  const input = new Graphim.DefaultInput();
 
-  renderer.render([ filter ]);
+  filter.connect(input);
+  renderer.render(filter);
 });
   </script>
 </body>

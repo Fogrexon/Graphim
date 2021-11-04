@@ -35,9 +35,11 @@ void main(void) {
   }
   gl_FragColor = accCol;
 }
-`, uni);
+  `, uni);
+  const input = new Graphim.DefaultInput();
 
-  renderer.animate([ filter ]);
+  filter.connect(input);
+  renderer.animate(filter);
 
   // update power
   setInterval(() => {

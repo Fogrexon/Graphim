@@ -48,8 +48,10 @@ img.addEventListener('load', () => {
   const power = new Graphim.Float(0.0);
   uni.set('power', power);
   const filter = new Graphim.Filter(shaders[0], uni);
+  const input = new Graphim.DefaultInput();
 
-  renderer.animate([ filter ]);
+  filter.connect(input);
+  renderer.animate(filter);
 
   // update power
   setInterval(() => {

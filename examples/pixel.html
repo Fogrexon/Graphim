@@ -20,8 +20,10 @@ img.addEventListener('load', () => {
     image: img,
   });
   filter = new Graphim.Primitives.Pixel(1);
+  const input = new Graphim.DefaultInput();
 
-  renderer.animate([ filter ]);
+  filter.connect(input);
+  renderer.animate( filter );
 });
 
 document.getElementById('block-size').addEventListener('change', (e) => {
