@@ -1262,6 +1262,7 @@
         var _this$gl;
 
         (_this$gl = this.gl) === null || _this$gl === void 0 ? void 0 : _this$gl.deleteTexture(this.renderResult.targetTexture);
+        this.initialized = '';
       }
     }, {
       key: "render",
@@ -1292,6 +1293,13 @@
         if (this.inputNode !== null) this.inputNode.removeOutputNode(this);
         this.inputNode = inputNode;
         this.inputNode.setOutputNode(this);
+      }
+    }, {
+      key: "disconnect",
+      value: function disconnect() {
+        if (!this.inputNode) return;
+        this.inputNode.removeOutputNode(this);
+        this.inputNode = null;
       }
     }]);
 
@@ -1422,7 +1430,7 @@
       value: function init(gl, canvasID) {
         _get(_getPrototypeOf(BlendNode.prototype), "init", this).call(this, gl, canvasID);
 
-        this.inputTextureLocation2 = gl.getUniformLocation(this.program, 'targetTexture2');
+        this.inputTextureLocation2 = gl.getUniformLocation(this.program, 'renderTexture2');
       }
     }, {
       key: "connect",
@@ -1502,8 +1510,7 @@
         } else {
           // frame buffer rendering
           gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
-          gl.bindTexture(gl.TEXTURE, this.renderResult.targetTexture);
-          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.canvas.width, gl.canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+          gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.renderResult.targetTexture, 0);
         } // set variables
 
 
@@ -1588,7 +1595,9 @@
         }
 
         if (this.getRenderResult().renderID === setting.renderID) return;
-        this.getRenderResult().renderID = setting.renderID;
+        this.getNowRenderResult().renderID = setting.renderID; // switch
+
+        this.resultSwitch = 1 - this.resultSwitch;
         var renderToCanvas = setting.renderToCanvas; // eslint-disable-next-line no-param-reassign
 
         setting.renderToCanvas = false;
@@ -1605,12 +1614,8 @@
           gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         } else {
           // frame buffer rendering
-          if (this.resultSwitch === 0) {
-            gl.bindFramebuffer(gl.FRAMEBUFFER, this.getNowFrameBuffer());
-            gl.bindTexture(gl.TEXTURE, this.getNowRenderResult().targetTexture);
-          }
-
-          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.canvas.width, gl.canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+          gl.bindFramebuffer(gl.FRAMEBUFFER, this.getNowFrameBuffer());
+          gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.getNowRenderResult().targetTexture, 0);
         } // set variables
 
 
@@ -1653,6 +1658,27 @@
 
     return DelayNode;
   }(MiddleNode);
+
+  var blendFs = "#define GLSLIFY 1\nuniform float blend;void main(){vec4 col1=texture2D(renderTexture,vUv);vec4 col2=texture2D(renderTexture2,vUv);gl_FragColor=mix(col1,col2,blend);}"; // eslint-disable-line
+
+  var Blend = /*#__PURE__*/function (_BlendFilter) {
+    _inherits(Blend, _BlendFilter);
+
+    var _super = _createSuper(Blend);
+
+    function Blend() {
+      var blend = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0.5;
+
+      _classCallCheck(this, Blend);
+
+      var uniforms = {
+        blend: new Float(blend)
+      };
+      return _super.call(this, blendFs, new UniformSetter(uniforms));
+    }
+
+    return Blend;
+  }(BlendFilter);
 
   var negFs = "#define GLSLIFY 1\nvoid main(){vec4 col=texture2D(renderTexture,vUv);gl_FragColor=vec4(vec3(1.0)-col.rgb,col.a);}"; // eslint-disable-line
 
@@ -1709,8 +1735,10 @@
 
     var _super = _createSuper(Bloom);
 
-    function Bloom(threshold, strength, blur) {
-      var _this;
+    function Bloom() {
+      var threshold = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0.5;
+      var strength = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2.0;
+      var blur = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1.0;
 
       _classCallCheck(this, Bloom);
 
@@ -1719,18 +1747,7 @@
         strength: new Float(strength),
         blur: new Float(blur)
       };
-      _this = _super.call(this, bloomFs, new UniformSetter(uniforms));
-
-      _defineProperty(_assertThisInitialized(_this), "threshold", void 0);
-
-      _defineProperty(_assertThisInitialized(_this), "strength", void 0);
-
-      _defineProperty(_assertThisInitialized(_this), "blur", void 0);
-
-      _this.threshold = uniforms.threshold;
-      _this.strength = uniforms.strength;
-      _this.blur = uniforms.blur;
-      return _this;
+      return _super.call(this, bloomFs, new UniformSetter(uniforms));
     }
 
     return Bloom;
@@ -1743,20 +1760,15 @@
 
     var _super = _createSuper(Blur);
 
-    function Blur(strength) {
-      var _this;
+    function Blur() {
+      var strength = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 5.0;
 
       _classCallCheck(this, Blur);
 
       var uniforms = {
         strength: new Float(strength)
       };
-      _this = _super.call(this, blurFs, new UniformSetter(uniforms));
-
-      _defineProperty(_assertThisInitialized(_this), "strength", void 0);
-
-      _this.strength = uniforms.strength;
-      return _this;
+      return _super.call(this, blurFs, new UniformSetter(uniforms));
     }
 
     return Blur;
@@ -1769,20 +1781,15 @@
 
     var _super = _createSuper(Pixel);
 
-    function Pixel(blockSize) {
-      var _this;
+    function Pixel() {
+      var blockSize = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 5;
 
       _classCallCheck(this, Pixel);
 
       var uniforms = {
         blockSize: new Float(blockSize)
       };
-      _this = _super.call(this, pixelFs, new UniformSetter(uniforms));
-
-      _defineProperty(_assertThisInitialized(_this), "blockSize", void 0);
-
-      _this.blockSize = uniforms.blockSize;
-      return _this;
+      return _super.call(this, pixelFs, new UniformSetter(uniforms));
     }
 
     return Pixel;
@@ -1795,29 +1802,23 @@
 
     var _super = _createSuper(FrostedGlass);
 
-    function FrostedGlass(randomSize) {
-      var _this;
+    function FrostedGlass() {
+      var randomSize = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 3;
 
       _classCallCheck(this, FrostedGlass);
 
       var uniforms = {
         randomSize: new Float(randomSize)
       };
-      _this = _super.call(this, frostedFs, new UniformSetter(uniforms));
-
-      _defineProperty(_assertThisInitialized(_this), "randomSize", void 0);
-
-      _this.randomSize = uniforms.randomSize;
-      return _this;
+      return _super.call(this, frostedFs, new UniformSetter(uniforms));
     }
 
     return FrostedGlass;
   }(Filter);
 
-  // export { Edge } from './Edge';
-
   var Primitives = /*#__PURE__*/Object.freeze({
     __proto__: null,
+    Blend: Blend,
     Neg: Neg,
     Sepia: Sepia,
     Gray: Gray,
