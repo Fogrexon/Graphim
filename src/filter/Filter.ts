@@ -5,7 +5,6 @@ import { compileShader } from '../utils';
 import { MiddleNode } from './MiddleNode';
 
 export class Filter extends MiddleNode {
-
   public init(gl: WebGLRenderingContext, canvasID: CanvasID) {
     super.init(gl, canvasID);
   }
@@ -34,23 +33,19 @@ export class Filter extends MiddleNode {
   public render(setting: RenderSetting) {
     if (!this.gl || !this.initialized || setting.canvasID !== this.initialized) {
       this.init(setting.gl, setting.canvasID);
-      if(!this.gl) throw new Error('gl is not initialized');
+      if (!this.gl) throw new Error('gl is not initialized');
     }
     if (this.renderResult.renderID === setting.renderID) return;
     this.renderResult.renderID = setting.renderID;
 
-    const {renderToCanvas} = setting;
+    const { renderToCanvas } = setting;
     // eslint-disable-next-line no-param-reassign
     setting.renderToCanvas = false;
-  
+
     this.inputNode?.render(setting);
 
     const { gl } = this;
-    const {
-      time: uniformTime,
-      mouse: uniformMouse,
-      isHover: uniformIsHover
-    } = setting;
+    const { time: uniformTime, mouse: uniformMouse, isHover: uniformIsHover } = setting;
     const { targetTexture: inputTexture } = (this.inputNode as GraphimNode).getRenderResult();
 
     if (renderToCanvas) {

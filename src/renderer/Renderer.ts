@@ -112,7 +112,7 @@ class Renderer {
       mouse: this.mouse,
       isHover: this.isHover,
       gl: this.gl,
-    }
+    };
 
     filters.render(renderData);
   }
