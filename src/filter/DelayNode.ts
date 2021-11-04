@@ -37,7 +37,10 @@ export class DelayNode extends MiddleNode {
       if(!this.gl) throw new Error('gl is not initialized');
     }
     if (this.getRenderResult().renderID === setting.renderID) return;
-    this.getRenderResult().renderID = setting.renderID;
+    this.getNowRenderResult().renderID = setting.renderID;
+
+    // switch
+    this.resultSwitch = 1 - this.resultSwitch;
 
     const {renderToCanvas} = setting;
     // eslint-disable-next-line no-param-reassign
@@ -57,20 +60,13 @@ export class DelayNode extends MiddleNode {
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     } else {
       // frame buffer rendering
-      if (this.resultSwitch === 0) {
-        gl.bindFramebuffer(gl.FRAMEBUFFER, this.getNowFrameBuffer());
-        gl.bindTexture(gl.TEXTURE, this.getNowRenderResult().targetTexture);
-      }
-      gl.texImage2D(
+      gl.bindFramebuffer(gl.FRAMEBUFFER, this.getNowFrameBuffer());
+      gl.framebufferTexture2D(
+        gl.FRAMEBUFFER,
+        gl.COLOR_ATTACHMENT0,
         gl.TEXTURE_2D,
-        0,
-        gl.RGBA,
-        gl.canvas.width,
-        gl.canvas.height,
-        0,
-        gl.RGBA,
-        gl.UNSIGNED_BYTE,
-        null
+        this.getNowRenderResult().targetTexture,
+        0
       );
     }
 
