@@ -1030,6 +1030,7 @@
     return FullScreenQuad;
   }();
 
+  /* eslint-disable no-param-reassign */
   var compileShader = function compileShader(gl, shader, source) {
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
@@ -1050,9 +1051,41 @@
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.canvas.width, gl.canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
     gl.bindTexture(gl.TEXTURE_2D, null);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  };
+  var bindTexture = function bindTexture(gl, texture, image) {
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+  };
+  var copyElementAttributes = function copyElementAttributes(a, b) {
+    a.width = b.width;
+    a.height = b.height;
+    b.classList.forEach(function (className) {
+      a.classList.add(className);
+    });
+    a.id = b.id;
+    Object.entries(b.style).forEach(function (_ref) {
+      var _ref2 = _slicedToArray(_ref, 2),
+          key = _ref2[0],
+          value = _ref2[1];
+
+      a.style.setProperty(key, value);
+    });
+    Object.entries(b.dataset).forEach(function (_ref3) {
+      var _ref4 = _slicedToArray(_ref3, 2),
+          key = _ref4[0],
+          value = _ref4[1];
+
+      a.setAttribute("data-".concat(key), value);
+    });
   };
 
   var quadVertex = "#define GLSLIFY 1\nattribute vec3 position;attribute vec2 uv;varying mediump vec4 vPosition;varying mediump vec2 vUv;uniform float flipY;void main(void){vPosition=vec4(position*vec3(1.0,flipY,1.0),1.0);vUv=uv;gl_Position=vPosition;}"; // eslint-disable-line
@@ -1123,13 +1156,14 @@
     }, {
       key: "release",
       value: function release() {
-        var _this$gl, _this$gl2, _this$gl3, _this$gl4, _this$quad;
+        var _this$gl, _this$gl2, _this$gl3, _this$gl4, _this$gl5, _this$quad;
 
         if (!this.initialized) return;
         (_this$gl = this.gl) === null || _this$gl === void 0 ? void 0 : _this$gl.deleteFramebuffer(this.framebuffer);
-        (_this$gl2 = this.gl) === null || _this$gl2 === void 0 ? void 0 : _this$gl2.deleteShader(this.vertexShader);
-        (_this$gl3 = this.gl) === null || _this$gl3 === void 0 ? void 0 : _this$gl3.deleteShader(this.fragmentShader);
-        (_this$gl4 = this.gl) === null || _this$gl4 === void 0 ? void 0 : _this$gl4.deleteProgram(this.program);
+        (_this$gl2 = this.gl) === null || _this$gl2 === void 0 ? void 0 : _this$gl2.deleteTexture(this.renderResult.targetTexture);
+        (_this$gl3 = this.gl) === null || _this$gl3 === void 0 ? void 0 : _this$gl3.deleteShader(this.vertexShader);
+        (_this$gl4 = this.gl) === null || _this$gl4 === void 0 ? void 0 : _this$gl4.deleteShader(this.fragmentShader);
+        (_this$gl5 = this.gl) === null || _this$gl5 === void 0 ? void 0 : _this$gl5.deleteProgram(this.program);
         (_this$quad = this.quad) === null || _this$quad === void 0 ? void 0 : _this$quad.release(this.gl);
         this.initialized = "";
       }
@@ -1166,58 +1200,79 @@
       _classCallCheck(this, DefaultInput);
 
       return _super.call(this, defaultFs);
-    }
+    } // eslint-disable-next-line no-unused-vars
+
 
     _createClass(DefaultInput, [{
+      key: "init",
+      value: function init(gl, canvasID) {// nothing to do
+      }
+    }, {
+      key: "release",
+      value: function release() {// nothing to do
+      }
+    }, {
       key: "render",
       value: function render(setting) {
-        var _this$quad, _this$uniforms;
-
-        if (!this.gl || !this.initialized || setting.canvasID !== this.initialized) {
-          this.init(setting.gl, setting.canvasID);
-          if (!this.gl) throw new Error('gl is not initialized');
-        }
-
-        if (this.renderResult.renderID === setting.renderID) return;
-        var renderToCanvas = setting.renderToCanvas; // eslint-disable-next-line no-param-reassign
-
-        setting.renderToCanvas = false;
-        var gl = this.gl;
-        var inputTexture = setting.inputTexture,
-            uniformTime = setting.time,
-            uniformMouse = setting.mouse,
-            uniformIsHover = setting.isHover;
-
-        if (renderToCanvas) {
-          gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-        } else {
-          // frame buffer rendering
-          gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
-          gl.bindTexture(gl.TEXTURE, this.renderResult.targetTexture);
-          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.canvas.width, gl.canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-        } // set variables
-
-
-        gl.useProgram(this.program);
-        (_this$quad = this.quad) === null || _this$quad === void 0 ? void 0 : _this$quad.render(gl);
-        (_this$uniforms = this.uniforms) === null || _this$uniforms === void 0 ? void 0 : _this$uniforms.render(gl, !!renderToCanvas, uniformTime, uniformMouse, uniformIsHover); // set render texture
-
-        gl.bindTexture(gl.TEXTURE_2D, inputTexture);
-        gl.uniform1i(this.inputTextureLocation, 0); // render
-
-        gl.clearColor(0.5, 0.5, 0.5, 1.0);
-        gl.enable(gl.DEPTH_TEST);
-        gl.depthFunc(gl.LEQUAL);
-        gl.clearDepth(0);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-        gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
-        gl.bindTexture(gl.TEXTURE_2D, null);
-        gl.flush();
+        // pass the input texture
+        this.renderResult.targetTexture = setting.inputTexture;
+        this.renderResult.renderID = setting.renderID;
+        if (setting.renderToCanvas) console.warn('DefaultInput cannot be destination node.');
       }
     }]);
 
     return DefaultInput;
+  }(GraphimNode);
+
+  var CustomInput = /*#__PURE__*/function (_GraphimNode) {
+    _inherits(CustomInput, _GraphimNode);
+
+    var _super = _createSuper(CustomInput);
+
+    function CustomInput(image) {
+      var _this;
+
+      _classCallCheck(this, CustomInput);
+
+      _this = _super.call(this, defaultFs);
+
+      _defineProperty(_assertThisInitialized(_this), "image", void 0);
+
+      _this.image = image;
+      return _this;
+    } // eslint-disable-next-line no-unused-vars
+
+
+    _createClass(CustomInput, [{
+      key: "init",
+      value: function init(gl, canvasID) {
+        this.gl = gl;
+        this.renderResult.targetTexture = gl.createTexture();
+        bindTexture(gl, this.renderResult.targetTexture, this.image);
+      }
+    }, {
+      key: "setImage",
+      value: function setImage(image) {
+        if (!this.initialized) return;
+        bindTexture(this.gl, this.renderResult.targetTexture, image);
+      }
+    }, {
+      key: "release",
+      value: function release() {
+        var _this$gl;
+
+        (_this$gl = this.gl) === null || _this$gl === void 0 ? void 0 : _this$gl.deleteTexture(this.renderResult.targetTexture);
+      }
+    }, {
+      key: "render",
+      value: function render(setting) {
+        // pass the input texture
+        this.renderResult.renderID = setting.renderID;
+        if (setting.renderToCanvas) console.warn('DefaultInput cannot be destination node.');
+      }
+    }]);
+
+    return CustomInput;
   }(GraphimNode);
 
   var MiddleNode = /*#__PURE__*/function (_GraphimNode) {
@@ -1275,7 +1330,7 @@
         }
 
         this.fragmentSource = newShader;
-        compileShader(this.gl, this.fragmentShader, "".concat(defaultFs, "\n").concat(this.fragmentSource));
+        compileShader(this.gl, this.fragmentShader, "".concat(headVector, "\n").concat(this.fragmentSource));
         this.gl.linkProgram(this.program);
 
         if (newUniforms) {
@@ -1313,8 +1368,7 @@
         } else {
           // frame buffer rendering
           gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
-          gl.bindTexture(gl.TEXTURE, this.renderResult.targetTexture);
-          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.canvas.width, gl.canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+          gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.renderResult.targetTexture, 0);
         } // set variables
 
 
@@ -1397,11 +1451,6 @@
     }
 
     _createClass(BlendFilter, [{
-      key: "init",
-      value: function init(gl, canvasID) {
-        _get(_getPrototypeOf(BlendFilter.prototype), "init", this).call(this, gl, canvasID);
-      }
-    }, {
       key: "setShader",
       value: function setShader(newShader, newUniforms) {
         var _this$uniforms;
@@ -1517,6 +1566,16 @@
         this.framebuffer2 = gl.createFramebuffer();
         this.renderResult2.targetTexture = gl.createTexture();
         setupRenderTexture(gl, this.framebuffer2, this.renderResult2.targetTexture);
+      }
+    }, {
+      key: "release",
+      value: function release() {
+        var _this$gl, _this$gl2;
+
+        _get(_getPrototypeOf(DelayNode.prototype), "release", this).call(this);
+
+        (_this$gl = this.gl) === null || _this$gl === void 0 ? void 0 : _this$gl.deleteFramebuffer(this.framebuffer2);
+        (_this$gl2 = this.gl) === null || _this$gl2 === void 0 ? void 0 : _this$gl2.deleteFramebuffer(this.renderResult2.targetTexture);
       }
     }, {
       key: "render",
@@ -1842,44 +1901,11 @@
     return stringify(rnds);
   }
 
-  var bindTexture = function bindTexture(gl, texture, image) {
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    gl.bindTexture(gl.TEXTURE_2D, null);
-  };
-
-  var copyElementAttributes = function copyElementAttributes(a, b) {
-    a.width = b.width;
-    a.height = b.height;
-    b.classList.forEach(function (className) {
-      a.classList.add(className);
-    });
-    a.id = b.id;
-    Object.entries(b.style).forEach(function (_ref) {
-      var _ref2 = _slicedToArray(_ref, 2),
-          key = _ref2[0],
-          value = _ref2[1];
-
-      a.style.setProperty(key, value);
-    });
-    Object.entries(b.dataset).forEach(function (_ref3) {
-      var _ref4 = _slicedToArray(_ref3, 2),
-          key = _ref4[0],
-          value = _ref4[1];
-
-      a.setAttribute("data-".concat(key), value);
-    });
-  };
-
   var Renderer = /*#__PURE__*/function () {
-    function Renderer(_ref5) {
+    function Renderer(_ref) {
       var _this = this;
 
-      var image = _ref5.image;
+      var image = _ref.image;
 
       _classCallCheck(this, Renderer);
 
@@ -2022,6 +2048,7 @@
   exports.BlendFilter = BlendFilter;
   exports.BlendNode = BlendNode;
   exports.Color = Color;
+  exports.CustomInput = CustomInput;
   exports.DefaultInput = DefaultInput;
   exports.DelayNode = DelayNode;
   exports.Filter = Filter;
