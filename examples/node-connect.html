@@ -4,28 +4,33 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Graphim Examples - Blur Filter</title>
+  <title>Graphim Examples - Node Connect</title>
   <script src="../build/umd/graphim.js"></script>
 </head>
 <body>
   <img src="./images/image1.jpg" width=500 />
   <div>
-    Strength: <input type="range" min=1 max=20 value=0.5 id="strength" step="1" />
-  </div>
+    Blur Strength: <input type="range" min=1 max=20 value=0.5 id="strength" step="1" />
+  </div><br>
+  <a href="./index.html">Back</a>
   <script>
-    let filter;
+let filter1;
 const img = document.getElementsByTagName("img")[0];
 img.addEventListener('load', () => {
   const renderer = new Graphim.Renderer({
     image: img,
   });
-  filter = new Graphim.Primitives.Blur(5);
+  filter1 = new Graphim.Primitives.Blur(5);
+  const filter2 = new Graphim.Primitives.Sepia();
+  const input = new Graphim.DefaultInput();
 
-  renderer.animate([ filter ]);
+  filter1.connect(input);
+  filter2.connect(filter1);
+  renderer.animate(filter2);
 });
 
 document.getElementById('strength').addEventListener('change', (e) => {
-  filter.uniforms.valueMap.strength.set(e.target.value);
+  filter1.uniforms.valueMap.strength.set(e.target.value);
 });
   </script>
 </body>

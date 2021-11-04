@@ -1,34 +1,34 @@
-import headVector from './glsl/variable.fs';
-import { UniformSetter } from './UniformSetter';
-import { CanvasID, GraphimNode, RenderSetting } from './GraphimNode';
-import { compileShader } from '../utils';
+import defaultFs from './glsl/default.fs';
+import { CanvasID, ForwardingData, GraphimNode, RenderSetting } from './GraphimNode';
 import { MiddleNode } from './MiddleNode';
+import { setupRenderTexture } from '../utils';
 
-export class Filter extends MiddleNode {
+export class DelayNode extends MiddleNode {
+  private resultSwitch = 0;
+
+  private framebuffer2: WebGLFramebuffer | null = null;
+ 
+  private renderResult2: ForwardingData = {
+    targetTexture: null,
+    renderID: '',
+  };
+  
+  constructor() {
+    super(defaultFs);
+  }
 
   public init(gl: WebGLRenderingContext, canvasID: CanvasID) {
     super.init(gl, canvasID);
+
+    this.framebuffer2 = <WebGLFramebuffer>gl.createFramebuffer();
+    this.renderResult2.targetTexture = <WebGLTexture>gl.createTexture();
+    setupRenderTexture(gl, this.framebuffer2, this.renderResult2.targetTexture);
   }
 
-  public getInitializedUUID() {
-    return this.initialized;
-  }
-
-  public setShader(newShader: string, newUniforms?: UniformSetter) {
-    if (!this.gl || !this.program || !this.vertexShader || !this.fragmentShader) {
-      console.warn('filter is not initialized.');
-      return;
-    }
-
-    this.fragmentSource = newShader;
-    compileShader(this.gl, this.fragmentShader, `${headVector}\n${this.fragmentSource}`);
-
-    this.gl.linkProgram(this.program);
-
-    if (newUniforms) {
-      this.uniforms = newUniforms;
-    }
-    this.uniforms?.init(this.gl, this.program);
+  public release() {
+    super.release();
+    this.gl?.deleteFramebuffer(this.framebuffer2);
+    this.gl?.deleteFramebuffer(this.renderResult2.targetTexture);
   }
 
   public render(setting: RenderSetting) {
@@ -36,13 +36,16 @@ export class Filter extends MiddleNode {
       this.init(setting.gl, setting.canvasID);
       if(!this.gl) throw new Error('gl is not initialized');
     }
-    if (this.renderResult.renderID === setting.renderID) return;
-    this.renderResult.renderID = setting.renderID;
+    if (this.getRenderResult().renderID === setting.renderID) return;
+    this.getNowRenderResult().renderID = setting.renderID;
+
+    // switch
+    this.resultSwitch = 1 - this.resultSwitch;
 
     const {renderToCanvas} = setting;
     // eslint-disable-next-line no-param-reassign
     setting.renderToCanvas = false;
-  
+
     this.inputNode?.render(setting);
 
     const { gl } = this;
@@ -57,12 +60,12 @@ export class Filter extends MiddleNode {
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     } else {
       // frame buffer rendering
-      gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, this.getNowFrameBuffer());
       gl.framebufferTexture2D(
         gl.FRAMEBUFFER,
         gl.COLOR_ATTACHMENT0,
         gl.TEXTURE_2D,
-        this.renderResult.targetTexture,
+        this.getNowRenderResult().targetTexture,
         0
       );
     }
@@ -90,5 +93,20 @@ export class Filter extends MiddleNode {
 
     gl.bindTexture(gl.TEXTURE_2D, null);
     gl.flush();
+  }
+
+  public getNowFrameBuffer(): WebGLFramebuffer | null {
+    if (this.resultSwitch === 0) return this.framebuffer2;
+    return this.framebuffer;
+  }
+
+  public getRenderResult(): ForwardingData {
+    if (this.resultSwitch === 0) return this.renderResult;
+    return this.renderResult2;
+  }
+
+  public getNowRenderResult(): ForwardingData {
+    if (this.resultSwitch === 0) return this.renderResult2;
+    return this.renderResult;
   }
 }

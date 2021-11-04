@@ -5,15 +5,13 @@ import { UniformSetter } from '../UniformSetter';
 import blurFs from './glsl/blur.fs';
 
 class Blur extends Filter {
-  public strength: Float;
 
-  constructor(strength: number) {
+  constructor(strength: number = 5.0) {
     const uniforms = {
       strength: new Float(strength),
     };
 
     super(blurFs, new UniformSetter(uniforms));
-    this.strength = uniforms.strength;
   }
 }
 

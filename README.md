@@ -74,11 +74,17 @@ void main(void) {
 // set new shader
 filter.setShader(newShader, uniform?);
 
+// connect input node
+const input = new Graphim.DefaultInput();
+filter.connect(input);
+
 // render
-renderer.animate([ filter1, filter2, ... ]);
+renderer.animate(filter);
 // render once
-// renderer.render([ filter1, filter2, ... ]);
+// renderer.render(filter);
 ```
+
+for more details, see examples.
 
 ## default shader variables
 

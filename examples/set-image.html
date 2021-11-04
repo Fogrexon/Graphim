@@ -8,7 +8,8 @@
   <script src="../build/umd/graphim.js"></script>
 </head>
 <body>
-  <img src="./images/image1.jpg" width=500 />
+  <img src="./images/image1.jpg" width=500 /><br>
+  <a href="./index.html">Back</a>
   <script>
 const imgs = [
   new Image(),
@@ -35,9 +36,11 @@ void main(void) {
   }
   gl_FragColor = accCol;
 }
-`, uni);
+  `, uni);
+  const input = new Graphim.DefaultInput();
 
-  renderer.animate([ filter ]);
+  filter.connect(input);
+  renderer.animate(filter);
 
   // update power
   setInterval(() => {
