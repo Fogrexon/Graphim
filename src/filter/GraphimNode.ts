@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
-import { UniformSetter } from "./UniformSetter";
-import { FullScreenQuad } from "./FullScreenQuad";
-import { compileShader, linkProgram, setupRenderTexture } from "../utils";
+import { UniformSetter } from './UniformSetter';
+import { FullScreenQuad } from './FullScreenQuad';
+import { compileShader, linkProgram, setupRenderTexture } from '../utils';
 import quadVertex from './glsl/quad.vs';
 import headVector from './glsl/variable.fs';
 
@@ -27,7 +27,7 @@ export interface RenderSetting {
 export abstract class GraphimNode {
   protected initialized: string = '';
 
-  public renderResult: ForwardingData = {targetTexture: null, renderID: ''};
+  public renderResult: ForwardingData = { targetTexture: null, renderID: '' };
 
   // webgl buffers
   protected gl: WebGLRenderingContext | null = null;
@@ -59,7 +59,7 @@ export abstract class GraphimNode {
   }
 
   public init(gl: WebGLRenderingContext, canvasID: CanvasID) {
-    if(this.initialized) this.release();
+    if (this.initialized) this.release();
     this.initialized = canvasID;
     this.gl = gl;
 
@@ -94,7 +94,7 @@ export abstract class GraphimNode {
     this.gl?.deleteProgram(this.program);
 
     this.quad?.release(this.gl as WebGLRenderingContext);
-    this.initialized = "";
+    this.initialized = '';
   }
 
   // eslint-disable-next-line no-unused-vars
@@ -102,10 +102,10 @@ export abstract class GraphimNode {
 
   public getRenderResult(): ForwardingData {
     return this.renderResult;
-  };
+  }
 
   public removeOutputNode(node: GraphimNode) {
-    this.outputNode = this.outputNode.filter(item => item !== node);
+    this.outputNode = this.outputNode.filter((item) => item !== node);
   }
 
   public setOutputNode(node: GraphimNode) {

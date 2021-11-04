@@ -5,7 +5,6 @@ import { UniformSetter } from '../UniformSetter';
 import blendFs from './glsl/blend.fs';
 
 class Blend extends BlendFilter {
-
   constructor(blend: number = 0.5) {
     const uniforms = {
       blend: new Float(blend),

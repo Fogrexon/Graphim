@@ -7,12 +7,12 @@ export class DelayNode extends MiddleNode {
   private resultSwitch = 0;
 
   private framebuffer2: WebGLFramebuffer | null = null;
- 
+
   private renderResult2: ForwardingData = {
     targetTexture: null,
     renderID: '',
   };
-  
+
   constructor() {
     super(defaultFs);
   }
@@ -34,7 +34,7 @@ export class DelayNode extends MiddleNode {
   public render(setting: RenderSetting) {
     if (!this.gl || !this.initialized || setting.canvasID !== this.initialized) {
       this.init(setting.gl, setting.canvasID);
-      if(!this.gl) throw new Error('gl is not initialized');
+      if (!this.gl) throw new Error('gl is not initialized');
     }
     if (this.getRenderResult().renderID === setting.renderID) return;
     this.getNowRenderResult().renderID = setting.renderID;
@@ -42,18 +42,14 @@ export class DelayNode extends MiddleNode {
     // switch
     this.resultSwitch = 1 - this.resultSwitch;
 
-    const {renderToCanvas} = setting;
+    const { renderToCanvas } = setting;
     // eslint-disable-next-line no-param-reassign
     setting.renderToCanvas = false;
 
     this.inputNode?.render(setting);
 
     const { gl } = this;
-    const {
-      time: uniformTime,
-      mouse: uniformMouse,
-      isHover: uniformIsHover
-    } = setting;
+    const { time: uniformTime, mouse: uniformMouse, isHover: uniformIsHover } = setting;
     const { targetTexture: inputTexture } = (this.inputNode as GraphimNode).getRenderResult();
 
     if (renderToCanvas) {

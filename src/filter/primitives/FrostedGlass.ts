@@ -5,7 +5,6 @@ import { UniformSetter } from '../UniformSetter';
 import frostedFs from './glsl/frosted.fs';
 
 class FrostedGlass extends Filter {
-
   constructor(randomSize: number = 3) {
     const uniforms = {
       randomSize: new Float(randomSize),

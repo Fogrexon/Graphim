@@ -25,23 +25,19 @@ export class BlendFilter extends BlendNode {
   public render(setting: RenderSetting) {
     if (!this.gl || !this.initialized || setting.canvasID !== this.initialized) {
       this.init(setting.gl, setting.canvasID);
-      if(!this.gl) throw new Error('gl is not initialized');
+      if (!this.gl) throw new Error('gl is not initialized');
     }
     if (this.renderResult.renderID === setting.renderID) return;
 
-    const {renderToCanvas} = setting;
+    const { renderToCanvas } = setting;
     // eslint-disable-next-line no-param-reassign
     setting.renderToCanvas = false;
-    
+
     this.inputNode?.render(setting);
     this.inputNode2?.render(setting);
 
     const { gl } = this;
-    const {
-      time: uniformTime,
-      mouse: uniformMouse,
-      isHover: uniformIsHover
-    } = setting;
+    const { time: uniformTime, mouse: uniformMouse, isHover: uniformIsHover } = setting;
     const { targetTexture: inputTexture } = (this.inputNode as GraphimNode).getRenderResult();
     const { targetTexture: inputTexture2 } = (this.inputNode2 as GraphimNode).getRenderResult();
 
@@ -67,13 +63,13 @@ export class BlendFilter extends BlendNode {
     // set render texture
     gl.bindTexture(gl.TEXTURE_2D, inputTexture);
     gl.uniform1i(this.inputTextureLocation, 0);
-  
+
     gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, inputTexture2);
     gl.uniform1i(this.inputTextureLocation2, 1);
 
     // set default active texture (0)
-    gl.activeTexture(gl.TEXTURE0)
+    gl.activeTexture(gl.TEXTURE0);
 
     // render
     gl.clearColor(0.5, 0.5, 0.5, 1.0);
