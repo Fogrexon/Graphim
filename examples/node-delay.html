@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graphim Examples - Blur Filter</title>
+  <script src="../build/umd/graphim.js"></script>
+</head>
+<body>
+  <img src="./images/image1.jpg" width=500 />
+  <script>
+const img = document.getElementsByTagName("img")[0];
+img.addEventListener('load', () => {
+  const renderer = new Graphim.Renderer({
+    image: img,
+  });
+
+  const input = new Graphim.DefaultInput();
+  const filter = new Graphim.Filter(`
+void main() {
+  vec4 col = texture2D(renderTexture, vUv + vec2(sin(time) * 0.1, cos(time) * 0.1));
+  gl_FragColor = col;
+}
+  `);
+
+  const delay1 = new Graphim.DelayNode();
+  const delay2 = new Graphim.DelayNode();
+  const delay3 = new Graphim.DelayNode();
+
+  const blend1 = new Graphim.Primitives.Blend(0.5);
+  const blend2 = new Graphim.Primitives.Blend(0.5);
+  const blend3 = new Graphim.Primitives.Blend(0.5);
+
+  filter.connect(input);
+  delay1.connect(filter);
+  delay2.connect(delay1);
+  delay3.connect(delay2);
+
+  blend1.connect(delay3, delay2);
+  blend2.connect(blend1, delay1);
+  blend3.connect(blend2, filter);
+
+  let time = 0;
+  setInterval(() => {
+    time = (Date.now() - 1636023562380) / 1000;
+    renderer.render(blend3, time);
+  }, 100);
+});
+  </script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graphim Examples - Blur Filter</title>
+  <script src="../build/umd/graphim.js"></script>
+</head>
+<body>
+  <img src="./images/image1.jpg" width=500 />
+  <div>
+    Blending: <input type="range" min=0 max=1 value=0.5 id="blend" step=0.01 />
+  </div>
+  <script>
+let blend;
+const img = document.getElementsByTagName("img")[0];
+img.addEventListener('load', () => {
+  const renderer = new Graphim.Renderer({
+    image: img,
+  });
+
+  const uni = new Graphim.UniformSetter();
+  uni.set('blend', new Graphim.Float(0.5));
+  blend = new Graphim.BlendFilter(`
+uniform float blend;
+void main() {
+  vec4 col1 = texture2D(renderTexture, vUv);
+  vec4 col2 = texture2D(renderTexture2, vUv);
+  gl_FragColor = mix(col1, col2, step(0.0, vUv.x - blend));
+}
+  `, uni);
+  const filter1 = new Graphim.Primitives.Blur(5);
+  const filter2 = new Graphim.Primitives.Sepia();
+  const input = new Graphim.DefaultInput();
+
+  filter1.connect(input);
+  filter2.connect(input);
+
+  blend.connect(filter1, filter2);
+  renderer.animate(blend);
+});
+
+document.getElementById('blend').addEventListener('change', (e) => {
+  blend.uniforms.valueMap.blend.set(e.target.value);
+});
+  </script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graphim Examples - Blur Filter</title>
+  <script src="../build/umd/graphim.js"></script>
+</head>
+<body>
+  <img src="./images/image1.jpg" id="target" width=500 /><br>
+  Mask: <img src="./images/star.png" id="mask" width=50 />
+  <script>
+const img = document.getElementById("target");
+img.addEventListener('load', () => {
+  const renderer = new Graphim.Renderer({
+    image: img,
+  });
+
+  const blend = new Graphim.BlendFilter(`
+void main() {
+  vec4 col1 = texture2D(renderTexture, vUv);
+  vec4 col2 = texture2D(renderTexture2, vUv);
+  gl_FragColor = col1 * col2.r;
+}
+  `);
+  const input = new Graphim.DefaultInput();
+
+  const mask = new Graphim.CustomInput(document.getElementById('mask'));
+
+  blend.connect(input, mask);
+  renderer.animate(blend);
+});
+  </script>
+</body>
+</html>
