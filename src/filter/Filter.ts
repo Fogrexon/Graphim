@@ -1,4 +1,4 @@
-import headVector from './glsl/default.fs';
+import headVector from './glsl/variable.fs';
 import { UniformSetter } from './UniformSetter';
 import { CanvasID, GraphimNode, RenderSetting } from './GraphimNode';
 import { compileShader } from '../utils';

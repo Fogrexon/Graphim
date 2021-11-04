@@ -18,4 +18,3 @@ void main() {
   vec2 pos = vUv * resolution;
   gl_FragColor = getPixel(pos);
 }
-
