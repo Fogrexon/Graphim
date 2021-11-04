@@ -5,15 +5,13 @@ import { UniformSetter } from '../UniformSetter';
 import pixelFs from './glsl/pixel.fs';
 
 class Pixel extends Filter {
-  public blockSize: Float;
 
-  constructor(blockSize: number) {
+  constructor(blockSize: number = 5) {
     const uniforms = {
       blockSize: new Float(blockSize),
     };
 
     super(pixelFs, new UniformSetter(uniforms));
-    this.blockSize = uniforms.blockSize;
   }
 }
 

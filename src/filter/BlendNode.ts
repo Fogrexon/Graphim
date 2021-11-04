@@ -8,7 +8,7 @@ export abstract class BlendNode extends GraphimNode {
   public init(gl: WebGLRenderingContext, canvasID: CanvasID) {
     super.init(gl, canvasID);
 
-    this.inputTextureLocation2 = gl.getUniformLocation(<WebGLProgram>this.program, 'targetTexture2');
+    this.inputTextureLocation2 = gl.getUniformLocation(<WebGLProgram>this.program, 'renderTexture2');
   }
 
   public connect(inputNode: GraphimNode, inputNode2: GraphimNode) {

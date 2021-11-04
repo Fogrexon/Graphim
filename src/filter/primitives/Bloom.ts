@@ -5,13 +5,8 @@ import { UniformSetter } from '../UniformSetter';
 import bloomFs from './glsl/bloom.fs';
 
 class Bloom extends Filter {
-  public threshold: Float;
 
-  public strength: Float;
-
-  public blur: Float;
-
-  constructor(threshold: number, strength: number, blur: number) {
+  constructor(threshold: number = 0.5, strength: number = 2.0, blur: number = 1.0) {
     const uniforms = {
       threshold: new Float(threshold),
       strength: new Float(strength),
@@ -19,9 +14,6 @@ class Bloom extends Filter {
     };
 
     super(bloomFs, new UniformSetter(uniforms));
-    this.threshold = uniforms.threshold;
-    this.strength = uniforms.strength;
-    this.blur = uniforms.blur;
   }
 }
 
