@@ -1165,7 +1165,7 @@
         (_this$gl4 = this.gl) === null || _this$gl4 === void 0 ? void 0 : _this$gl4.deleteShader(this.fragmentShader);
         (_this$gl5 = this.gl) === null || _this$gl5 === void 0 ? void 0 : _this$gl5.deleteProgram(this.program);
         (_this$quad = this.quad) === null || _this$quad === void 0 ? void 0 : _this$quad.release(this.gl);
-        this.initialized = "";
+        this.initialized = '';
       }
     }, {
       key: "getRenderResult",
