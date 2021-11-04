@@ -1267,7 +1267,12 @@
     }, {
       key: "render",
       value: function render(setting) {
-        // pass the input texture
+        if (!this.gl || !this.initialized || setting.canvasID !== this.initialized) {
+          this.init(setting.gl, setting.canvasID);
+          if (!this.gl) throw new Error('gl is not initialized');
+        } // pass the input texture
+
+
         this.renderResult.renderID = setting.renderID;
         if (setting.renderToCanvas) console.warn('DefaultInput cannot be destination node.');
       }

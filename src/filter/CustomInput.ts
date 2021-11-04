@@ -31,6 +31,10 @@ export abstract class CustomInput extends GraphimNode {
   }
 
   public render(setting: RenderSetting): void {
+    if (!this.gl || !this.initialized || setting.canvasID !== this.initialized) {
+      this.init(setting.gl, setting.canvasID);
+      if(!this.gl) throw new Error('gl is not initialized');
+    }
     // pass the input texture
     this.renderResult.renderID = setting.renderID;
     if(setting.renderToCanvas) console.warn('DefaultInput cannot be destination node.');
