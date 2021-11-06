@@ -1,6 +1,6 @@
 {
   "name": "graphim",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Light and fast library for image effect.",
   "main": "build/commonjs/src/index.js",
   "module": "build/es/src/index.js",
