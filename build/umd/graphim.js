@@ -899,6 +899,10 @@
 
       _defineProperty(this, "locationMap", {});
 
+      _defineProperty(this, "gl", null);
+
+      _defineProperty(this, "program", null);
+
       _defineProperty(this, "flipYLocation", -1);
 
       _defineProperty(this, "timeLocation", -1);
@@ -913,6 +917,21 @@
     }
 
     _createClass(UniformSetter, [{
+      key: "addUniform",
+      value: function addUniform(varName, value) {
+        this.valueMap[varName] = value;
+
+        if (this.gl && this.program) {
+          this.locationMap[varName] = this.gl.getUniformLocation(this.program, varName);
+        }
+      }
+    }, {
+      key: "removeUniform",
+      value: function removeUniform(varName) {
+        delete this.valueMap[varName];
+        delete this.locationMap[varName];
+      }
+    }, {
       key: "init",
       value: function init(gl, program) {
         var _this = this;
@@ -928,6 +947,8 @@
 
           _this.locationMap[label] = gl.getUniformLocation(program, label);
         });
+        this.gl = gl;
+        this.program = program;
       }
     }, {
       key: "render",
