@@ -9,6 +9,10 @@ class UniformSetter {
     [key: string]: WebGLUniformLocation;
   } = {};
 
+  private gl: WebGLRenderingContext | null = null;
+
+  private program: WebGLProgram | null = null;
+
   private flipYLocation: WebGLUniformLocation = -1;
 
   private timeLocation: WebGLUniformLocation = -1;
@@ -27,6 +31,18 @@ class UniformSetter {
     this.valueMap = valueMap;
   }
 
+  public addUniform(varName: string, value: Uniform) {
+    this.valueMap[varName] = value;
+    if (this.gl && this.program) {
+      this.locationMap[varName] = <WebGLUniformLocation>this.gl.getUniformLocation(this.program, varName);
+    }
+  }
+
+  public removeUniform(varName: string) {
+    delete this.valueMap[varName];
+    delete this.locationMap[varName];
+  }
+
   public init(gl: WebGLRenderingContext, program: WebGLProgram) {
     this.flipYLocation = <WebGLUniformLocation>gl.getUniformLocation(program, 'flipY');
     this.timeLocation = <WebGLUniformLocation>gl.getUniformLocation(program, 'time');
@@ -37,6 +53,8 @@ class UniformSetter {
     Object.entries(this.valueMap).forEach(([label]) => {
       this.locationMap[label] = <WebGLUniformLocation>gl.getUniformLocation(program, label);
     });
+    this.gl = gl;
+    this.program = program;
   }
 
   public render(
