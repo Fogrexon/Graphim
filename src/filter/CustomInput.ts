@@ -3,7 +3,7 @@ import { CanvasID, GraphimNode, RenderSetting } from './GraphimNode';
 import defaultFs from './glsl/default.fs';
 import { bindTexture } from '../utils';
 
-export abstract class CustomInput extends GraphimNode {
+export class CustomInput extends GraphimNode {
   private image: HTMLImageElement;
 
   constructor(image: HTMLImageElement) {

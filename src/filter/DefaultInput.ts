@@ -2,7 +2,7 @@
 import { CanvasID, GraphimNode, RenderSetting } from './GraphimNode';
 import defaultFs from './glsl/default.fs';
 
-export abstract class DefaultInput extends GraphimNode {
+export class DefaultInput extends GraphimNode {
   constructor() {
     super(defaultFs);
   }
