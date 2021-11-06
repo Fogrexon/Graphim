@@ -34,7 +34,9 @@ class UniformSetter {
   public addUniform(varName: string, value: Uniform) {
     this.valueMap[varName] = value;
     if (this.gl && this.program) {
-      this.locationMap[varName] = <WebGLUniformLocation>this.gl.getUniformLocation(this.program, varName);
+      this.locationMap[varName] = <WebGLUniformLocation>(
+        this.gl.getUniformLocation(this.program, varName)
+      );
     }
   }
 
