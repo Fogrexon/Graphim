@@ -1,5 +1,12 @@
 /* eslint-disable no-param-reassign */
-export const compileShader = (gl: WebGLRenderingContext, shader: WebGLShader, source: string) => {
+export /**
+ * comple shader from source
+ *
+ * @param {WebGLRenderingContext} gl
+ * @param {WebGLShader} shader
+ * @param {string} source
+ */
+const compileShader = (gl: WebGLRenderingContext, shader: WebGLShader, source: string) => {
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
@@ -8,7 +15,15 @@ export const compileShader = (gl: WebGLRenderingContext, shader: WebGLShader, so
   }
 };
 
-export const linkProgram = (
+export /**
+ * link vertex and fragment texture
+ *
+ * @param {WebGLRenderingContext} gl
+ * @param {WebGLProgram} program
+ * @param {WebGLShader} vertex
+ * @param {WebGLShader} fragment
+ */
+const linkProgram = (
   gl: WebGLRenderingContext,
   program: WebGLProgram,
   vertex: WebGLShader,
@@ -20,7 +35,14 @@ export const linkProgram = (
   gl.linkProgram(program);
 };
 
-export const setupRenderTexture = (
+export /**
+ * Bind texture to framebuffer as render texture
+ * 
+ * @param {WebGLRenderingContext} gl
+ * @param {WebGLFramebuffer} frameBuffer
+ * @param {WebGLTexture} texture
+ */
+const setupRenderTexture = (
   gl: WebGLRenderingContext,
   frameBuffer: WebGLFramebuffer,
   texture: WebGLTexture
@@ -47,7 +69,14 @@ export const setupRenderTexture = (
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 };
 
-export const bindTexture = (
+export /**
+ * Bind image element to texture object
+ *
+ * @param {WebGLRenderingContext} gl
+ * @param {WebGLTexture} texture
+ * @param {HTMLImageElement} image
+ */
+const bindTexture = (
   gl: WebGLRenderingContext,
   texture: WebGLTexture,
   image: HTMLImageElement
@@ -63,7 +92,13 @@ export const bindTexture = (
   gl.bindTexture(gl.TEXTURE_2D, null);
 };
 
-export const copyElementAttributes = (
+export /**
+ * Copy element attributes(width / height / class / id / style / dataset) from a to b
+ *
+ * @param {(HTMLImageElement | HTMLCanvasElement)} a
+ * @param {(HTMLImageElement | HTMLCanvasElement)} b
+ */
+const copyElementAttributes = (
   a: HTMLImageElement | HTMLCanvasElement,
   b: HTMLImageElement | HTMLCanvasElement
 ) => {
