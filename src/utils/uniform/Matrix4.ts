@@ -1,35 +1,79 @@
 import { Vector4 } from './Vector4';
 import { Vector3 } from './Vector3';
+import { Uniform } from './Uniform';
 
-class Matrix4 {
+/**
+ * Uniform variable for Matrix4(mat4)
+ * 
+ * @exports
+ * @class Matrix4
+ * @implements {Uniform}
+ */
+class Matrix4 implements Uniform {
   matrix: number[] = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
+  /**
+   * Creates an instance of Matrix4.
+   * @param {number[]} [numArray]
+   * @memberof Matrix4
+   */
   constructor(numArray?: number[]) {
     if (numArray) this.set(numArray);
   }
 
-  // generate
+  /**
+   * create identity matrix
+   *
+   * @return {*}  {Matrix4}
+   * @memberof Matrix4
+   */
   public eye(): Matrix4 {
     this.matrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
     return this;
   }
 
+  /**
+   * set value
+   *
+   * @param {number[]} numArray
+   * @return {*}  {Matrix4}
+   * @memberof Matrix4
+   */
   public set(numArray: number[]): Matrix4 {
     this.matrix = numArray;
     return this;
   }
 
+  /**
+   * create 0-filled matrix
+   *
+   * @return {*}  {Matrix4}
+   * @memberof Matrix4
+   */
   public empty(): Matrix4 {
     this.matrix = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     return this;
   }
 
+  /**
+   * create a-filled matrix
+   *
+   * @param {number} a
+   * @return {*}  {Matrix4}
+   * @memberof Matrix4
+   */
   public fill(a: number): Matrix4 {
     this.matrix = [a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a];
     return this;
   }
 
-  // culcurate
+  /**
+   * add each element
+   *
+   * @param {(Matrix4 | number)} add
+   * @return {*}  {Matrix4}
+   * @memberof Matrix4
+   */
   public add(add: Matrix4 | number): Matrix4 {
     const m: number[] = this.matrix;
     if (add instanceof Matrix4) {
@@ -73,6 +117,13 @@ class Matrix4 {
     ]);
   }
 
+  /**
+   * subtract each element
+   *
+   * @param {Matrix4} sub
+   * @return {*}  {Matrix4}
+   * @memberof Matrix4
+   */
   public subtract(sub: Matrix4): Matrix4 {
     const m: number[] = this.matrix;
     if (sub instanceof Matrix4) {
@@ -116,6 +167,14 @@ class Matrix4 {
     ]);
   }
 
+  /**
+   * mat4 x mat4 or mat4 x vec4(size 4,1) or mat4 x scalar
+   * "this" is left value
+   *
+   * @param {(number | Matrix4 | Vector4)} mul
+   * @return {*}  {(Matrix4 | Vector4)}
+   * @memberof Matrix4
+   */
   public multiply(mul: number | Matrix4 | Vector4): Matrix4 | Vector4 {
     const m: number[] = this.matrix;
     if (mul instanceof Matrix4) {
@@ -167,6 +226,12 @@ class Matrix4 {
     ]);
   }
 
+  /**
+   * transpose matrix
+   *
+   * @return {*}  {Matrix4}
+   * @memberof Matrix4
+   */
   public transpose(): Matrix4 {
     const m: number[] = this.matrix;
     return new Matrix4([
@@ -189,6 +254,13 @@ class Matrix4 {
     ]);
   }
 
+  /**
+   * calc inverted matrix
+   * if determine is zero, throw error
+   *
+   * @return {*}  {Matrix4}
+   * @memberof Matrix4
+   */
   public inverse(): Matrix4 {
     const mat: number[] = this.matrix;
     const a = mat[0];
@@ -243,10 +315,22 @@ class Matrix4 {
     return new Matrix4(dest);
   }
 
+  /**
+   * get value as float32array
+   *
+   * @return {*}  {Float32Array}
+   * @memberof Matrix4
+   */
   public getArray(): Float32Array {
     return new Float32Array(this.matrix);
   }
 
+  /**
+   * get rotation x scale matrix
+   *
+   * @return {*}  {Matrix4}
+   * @memberof Matrix4
+   */
   public getScaleRotationMatrix(): Matrix4 {
     const m = this.matrix;
     return new Matrix4([
@@ -269,10 +353,23 @@ class Matrix4 {
     ]);
   }
 
+  /**
+   * return translation component
+   *
+   * @return {*}  {Vector3}
+   * @memberof Matrix4
+   */
   public getTranslateVector(): Vector3 {
     return new Vector3(this.matrix[12], this.matrix[13], this.matrix[14]);
   }
 
+  /**
+   * set uniform value
+   *
+   * @param {WebGLRenderingContext} gl
+   * @param {WebGLUniformLocation} location
+   * @memberof Matrix4
+   */
   public setUniform(gl: WebGLRenderingContext, location: WebGLUniformLocation) {
     gl.uniformMatrix4fv(location, false, this.getArray());
   }
