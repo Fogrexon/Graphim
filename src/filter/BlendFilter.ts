@@ -4,8 +4,24 @@ import { GraphimNode, RenderSetting } from './GraphimNode';
 import { compileShader } from '../utils';
 import { BlendNode } from './BlendNode';
 
+/**
+ * Blend two filter result
+ * 
+ * @module BlendFilter
+ * @export
+ * @class BlendFilter
+ * @extends {BlendNode}
+ */
 export class BlendFilter extends BlendNode {
-  public setShader(newShader: string, newUniforms?: UniformSetter) {
+  /**
+   * Reassign shader
+   *
+   * @param {string} newShader
+   * @param {UniformSetter} [newUniforms]
+   * @return {*}  {void}
+   * @memberof BlendFilter
+   */
+  public setShader(newShader: string, newUniforms?: UniformSetter): void {
     if (!this.gl || !this.program || !this.vertexShader || !this.fragmentShader) {
       console.warn('filter is not initialized.');
       return;
@@ -22,6 +38,13 @@ export class BlendFilter extends BlendNode {
     this.uniforms?.init(this.gl, this.program);
   }
 
+  /**
+   * Render blend filter (only renderer calls)
+   *
+   * @param {RenderSetting} setting
+   * @return {*} 
+   * @memberof BlendFilter
+   */
   public render(setting: RenderSetting) {
     if (!this.gl || !this.initialized || setting.canvasID !== this.initialized) {
       this.init(setting.gl, setting.canvasID);

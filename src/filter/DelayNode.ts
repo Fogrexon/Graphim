@@ -3,6 +3,13 @@ import { CanvasID, ForwardingData, GraphimNode, RenderSetting } from './GraphimN
 import { MiddleNode } from './MiddleNode';
 import { setupRenderTexture } from '../utils';
 
+/**
+ * Delay one frame
+ *
+ * @export
+ * @class DelayNode
+ * @extends {MiddleNode}
+ */
 export class DelayNode extends MiddleNode {
   private resultSwitch = 0;
 
@@ -13,10 +20,21 @@ export class DelayNode extends MiddleNode {
     renderID: '',
   };
 
+  /**
+   * Creates an instance of DelayNode.
+   * @memberof DelayNode
+   */
   constructor() {
     super(defaultFs);
   }
 
+  /**
+   * Initialize (only renderer calls)
+   *
+   * @param {WebGLRenderingContext} gl
+   * @param {CanvasID} canvasID
+   * @memberof DelayNode
+   */
   public init(gl: WebGLRenderingContext, canvasID: CanvasID) {
     super.init(gl, canvasID);
 
@@ -25,13 +43,25 @@ export class DelayNode extends MiddleNode {
     setupRenderTexture(gl, this.framebuffer2, this.renderResult2.targetTexture);
   }
 
+  /**
+   * Release webgl objects (only renderer calls)
+   *
+   * @memberof DelayNode
+   */
   public release() {
     super.release();
     this.gl?.deleteFramebuffer(this.framebuffer2);
     this.gl?.deleteFramebuffer(this.renderResult2.targetTexture);
   }
 
-  public render(setting: RenderSetting) {
+  /**
+   * Render previous frame (only renderer calls)
+   *
+   * @param {RenderSetting} setting
+   * @return {*} {void}
+   * @memberof DelayNode
+   */
+  public render(setting: RenderSetting): void {
     if (!this.gl || !this.initialized || setting.canvasID !== this.initialized) {
       this.init(setting.gl, setting.canvasID);
       if (!this.gl) throw new Error('gl is not initialized');
@@ -91,16 +121,34 @@ export class DelayNode extends MiddleNode {
     gl.flush();
   }
 
+  /**
+   * Get current frame buffer
+   *
+   * @return {*}  {(WebGLFramebuffer | null)}
+   * @memberof DelayNode
+   */
   public getNowFrameBuffer(): WebGLFramebuffer | null {
     if (this.resultSwitch === 0) return this.framebuffer2;
     return this.framebuffer;
   }
 
+  /**
+   * Get render result
+   *
+   * @return {*}  {ForwardingData}
+   * @memberof DelayNode
+   */
   public getRenderResult(): ForwardingData {
     if (this.resultSwitch === 0) return this.renderResult;
     return this.renderResult2;
   }
 
+  /**
+   * Get current render result
+   *
+   * @return {*}  {ForwardingData}
+   * @memberof DelayNode
+   */
   public getNowRenderResult(): ForwardingData {
     if (this.resultSwitch === 0) return this.renderResult2;
     return this.renderResult;

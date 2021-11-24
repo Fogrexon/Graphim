@@ -1,10 +1,31 @@
 import { Uniform, Vector2 } from '../utils/Uniforms';
 
+/**
+ * Helper class to set uniforms
+ *
+ * @class UniformSetter
+ */
 class UniformSetter {
+  /**
+   * map of uniform values
+   *
+   * @type {{
+   *     [key: string]: Uniform;
+   *   }}
+   * @memberof UniformSetter
+   */
   public valueMap: {
     [key: string]: Uniform;
   } = {};
 
+  /**
+   * map of location of uniforms
+   *
+   * @type {{
+   *     [key: string]: WebGLUniformLocation;
+   *   }}
+   * @memberof UniformSetter
+   */
   public locationMap: {
     [key: string]: WebGLUniformLocation;
   } = {};
@@ -23,6 +44,13 @@ class UniformSetter {
 
   private isHoverLocation: WebGLUniformLocation = -1;
 
+  /**
+   * Creates an instance of UniformSetter.
+   * @param {{
+   *       [key: string]: Uniform;
+   *     }} [valueMap={}]
+   * @memberof UniformSetter
+   */
   constructor(
     valueMap: {
       [key: string]: Uniform;
@@ -31,6 +59,13 @@ class UniformSetter {
     this.valueMap = valueMap;
   }
 
+  /**
+   * Add uniform 
+   *
+   * @param {string} varName
+   * @param {Uniform} value
+   * @memberof UniformSetter
+   */
   public addUniform(varName: string, value: Uniform) {
     this.valueMap[varName] = value;
     if (this.gl && this.program) {
@@ -39,12 +74,47 @@ class UniformSetter {
       );
     }
   }
-
+  
+  /**
+   * Get uniform object
+   *
+   * @param {string} varName
+   * @return {*}  {Uniform}
+   * @memberof UniformSetter
+   */
+  public getUniform(varName: string): Uniform {
+    return this.valueMap[varName];
+  }
+  
+  /**
+   * Remove uniform object
+   *
+   * @param {string} varName
+   * @memberof UniformSetter
+   */
   public removeUniform(varName: string) {
     delete this.valueMap[varName];
     delete this.locationMap[varName];
   }
 
+  /**
+   * Replace uniform object
+   *
+   * @param {string} label
+   * @param {Uniform} value
+   * @memberof UniformSetter
+   */
+  public setUniform(label: string, value: Uniform) {
+    this.valueMap[label] = value;
+  }
+  
+  /**
+   * Initialize (only node calls)
+   *
+   * @param {WebGLRenderingContext} gl
+   * @param {WebGLProgram} program
+   * @memberof UniformSetter
+   */
   public init(gl: WebGLRenderingContext, program: WebGLProgram) {
     this.flipYLocation = <WebGLUniformLocation>gl.getUniformLocation(program, 'flipY');
     this.timeLocation = <WebGLUniformLocation>gl.getUniformLocation(program, 'time');
@@ -59,6 +129,16 @@ class UniformSetter {
     this.program = program;
   }
 
+  /**
+   * pass values to shader
+   *
+   * @param {WebGLRenderingContext} gl
+   * @param {boolean} renderToCanvas
+   * @param {number} [time]
+   * @param {[number, number]} [mouse]
+   * @param {boolean} [isHover]
+   * @memberof UniformSetter
+   */
   public render(
     gl: WebGLRenderingContext,
     renderToCanvas: boolean,
@@ -77,9 +157,6 @@ class UniformSetter {
     });
   }
 
-  public set(label: string, value: Uniform) {
-    this.valueMap[label] = value;
-  }
 }
 
 export { UniformSetter };

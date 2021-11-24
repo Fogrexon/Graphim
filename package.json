@@ -10,7 +10,8 @@
     "start:example": "http-server",
     "lint:prettier": "prettier \"./src/**/*.ts\"",
     "lint:eslint": "eslint \"./src/**/*.ts\"",
-    "lint:fix": "prettier \"./src/**/*.ts\" --write & eslint \"./src/**/*.ts\" --fix"
+    "lint:fix": "prettier \"./src/**/*.ts\" --write & eslint \"./src/**/*.ts\" --fix",
+    "docs": "jsdoc src -d docs"
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,7 @@
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.24.1",
+    "jsdoc": "^3.6.7",
     "postcss": "^8.3.6",
     "prettier": "^2.3.2",
     "rollup": "^2.56.2",

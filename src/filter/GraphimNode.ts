@@ -8,11 +8,23 @@ import headVector from './glsl/variable.fs';
 export type RenderID = string;
 export type CanvasID = string;
 
+/**
+ * filters pass this object to next filter
+ *
+ * @export
+ * @interface ForwardingData
+ */
 export interface ForwardingData {
   targetTexture: WebGLTexture | null;
   renderID: RenderID;
 }
 
+/**
+ * renderer pass this object to inform render settings and default variables
+ *
+ * @export
+ * @interface RenderSetting
+ */
 export interface RenderSetting {
   renderID: RenderID;
   canvasID: CanvasID;
@@ -24,9 +36,22 @@ export interface RenderSetting {
   gl: WebGLRenderingContext;
 }
 
+/**
+ * The base class of node
+ *
+ * @export
+ * @abstract
+ * @class GraphimNode
+ */
 export abstract class GraphimNode {
   protected initialized: string = '';
 
+  /**
+   * Result of this node
+   *
+   * @type {ForwardingData}
+   * @memberof GraphimNode
+   */
   public renderResult: ForwardingData = { targetTexture: null, renderID: '' };
 
   // webgl buffers
@@ -53,11 +78,24 @@ export abstract class GraphimNode {
 
   protected inputNode: GraphimNode | null = null;
 
+  /**
+   * Creates an instance of GraphimNode.
+   * @param {string} fragmentSource
+   * @param {UniformSetter} [uniforms]
+   * @memberof GraphimNode
+   */
   constructor(fragmentSource: string, uniforms?: UniformSetter) {
     this.fragmentSource = fragmentSource;
     this.uniforms = uniforms || new UniformSetter({});
   }
 
+  /**
+   * Initialize webgl objects (only renderer calls)
+   *
+   * @param {WebGLRenderingContext} gl
+   * @param {CanvasID} canvasID
+   * @memberof GraphimNode
+   */
   public init(gl: WebGLRenderingContext, canvasID: CanvasID) {
     if (this.initialized) this.release();
     this.initialized = canvasID;
@@ -85,6 +123,12 @@ export abstract class GraphimNode {
     this.inputTextureLocation = gl.getUniformLocation(<WebGLProgram>this.program, 'targetTexture');
   }
 
+  /**
+   * Release the webgl objects (only renderer calls)
+   *
+   * @return {*} 
+   * @memberof GraphimNode
+   */
   public release() {
     if (!this.initialized) return;
     this.gl?.deleteFramebuffer(this.framebuffer);
@@ -97,17 +141,42 @@ export abstract class GraphimNode {
     this.initialized = '';
   }
 
-  // eslint-disable-next-line no-unused-vars
+  /**
+   * Render this node
+   *
+   * @abstract
+   * @param {RenderSetting} setting
+   * @memberof GraphimNode
+   */
   public abstract render(setting: RenderSetting): void;
 
+  /**
+   * Get render result
+   *
+   * @return {*}  {ForwardingData}
+   * @memberof GraphimNode
+   */
   public getRenderResult(): ForwardingData {
     return this.renderResult;
   }
 
+  /**
+   * if disconnect node, remove its output node from outputNode list
+   *
+   * @param {GraphimNode} node
+   * @memberof GraphimNode
+   */
   public removeOutputNode(node: GraphimNode) {
     this.outputNode = this.outputNode.filter((item) => item !== node);
+    if (this.outputNode.length === 0) this.release();
   }
 
+  /**
+   * if connect node, add its output node to outputNode list
+   *
+   * @param {GraphimNode} node
+   * @memberof GraphimNode
+   */
   public setOutputNode(node: GraphimNode) {
     this.outputNode.push(node);
   }
