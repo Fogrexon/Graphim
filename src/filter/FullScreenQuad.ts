@@ -73,7 +73,7 @@ class FullScreenQuad {
   }
 
   /**
-   * Release (only renderer calls)
+   * Release
    *
    * @param {WebGLRenderingContext} gl
    * @memberof FullScreenQuad

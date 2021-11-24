@@ -44,7 +44,7 @@ export class DelayNode extends MiddleNode {
   }
 
   /**
-   * Release webgl objects (only renderer calls)
+   * Release webgl objects 
    *
    * @memberof DelayNode
    */

@@ -32,7 +32,7 @@ export abstract class MiddleNode extends GraphimNode {
   }
 
   /**
-   * Release webgl object (only render )
+   * Release webgl object
    *
    * @memberof MiddleNode
    */

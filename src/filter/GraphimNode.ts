@@ -124,7 +124,7 @@ export abstract class GraphimNode {
   }
 
   /**
-   * Release the webgl objects (only renderer calls)
+   * Release the webgl objects
    *
    * @return {*} 
    * @memberof GraphimNode

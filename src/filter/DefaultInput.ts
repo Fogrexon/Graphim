@@ -27,7 +27,7 @@ export class DefaultInput extends GraphimNode {
   }
 
   /**
-   * Release webgl objects (only renderer calls)
+   * Release webgl objects
    *
    * @memberof DefaultInput
    */

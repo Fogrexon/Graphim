@@ -3,10 +3,21 @@ import { v4 as uuidv4 } from 'uuid';
 import { GraphimNode, RenderSetting } from '../filter/GraphimNode';
 import { bindTexture, copyElementAttributes } from '../utils';
 
+/**
+ * Renderer setup parameter
+ *
+ * @interface RendererParameter
+ */
 interface RendererParameter {
   image: HTMLImageElement;
 }
 
+/**
+ * renderer to render filtered image
+ *
+ * @exports
+ * @class Renderer
+ */
 class Renderer {
   private originalImage: HTMLImageElement;
 
@@ -28,6 +39,11 @@ class Renderer {
 
   private canvasID: string;
 
+  /**
+   * Creates an instance of Renderer.
+   * @param {RendererParameter} { image }
+   * @memberof Renderer
+   */
   constructor({ image }: RendererParameter) {
     this.originalImage = image;
 
@@ -74,6 +90,13 @@ class Renderer {
     bindTexture(this.gl, this.imageTexture, this.image);
   }
 
+  /**
+   * update mouse position by mouse and touch event
+   *
+   * @private
+   * @param {(MouseEvent | TouchEvent)} e
+   * @memberof Renderer
+   */
   private handlePointer(e: MouseEvent | TouchEvent) {
     if (e instanceof TouchEvent) {
       const rect = (<HTMLElement>e.target).getBoundingClientRect();
@@ -86,6 +109,12 @@ class Renderer {
     }
   }
 
+  /**
+   * Reassign image element
+   *
+   * @param {HTMLImageElement} image
+   * @memberof Renderer
+   */
   public setImage(image: HTMLImageElement) {
     this.image = image;
     this.originalImage.src = image.src;
@@ -96,12 +125,24 @@ class Renderer {
     bindTexture(this.gl, this.imageTexture, this.image);
   }
 
+  /**
+   * Release filters
+   *
+   * @memberof Renderer
+   */
   public release() {
     this.gl.deleteTexture(this.imageTexture);
     this.image.style.removeProperty('display');
     this.canvas.remove();
   }
 
+  /**
+   * render filtered image (once)
+   *
+   * @param {GraphimNode} filters
+   * @param {number} [time=0]
+   * @memberof Renderer
+   */
   public render(filters: GraphimNode, time = 0) {
     const renderData: RenderSetting = {
       inputTexture: this.imageTexture,
@@ -117,6 +158,12 @@ class Renderer {
     filters.render(renderData);
   }
 
+  /**
+   * Render filtered image (every frame)
+   *
+   * @param {GraphimNode} filters
+   * @memberof Renderer
+   */
   public animate(filters: GraphimNode) {
     let start = new Date().getTime() / 1000;
     this.isAnimation = true;
@@ -133,6 +180,11 @@ class Renderer {
     tick();
   }
 
+  /**
+   * Stop image update
+   *
+   * @memberof Renderer
+   */
   public stopAnimate() {
     this.isAnimation = false;
   }
