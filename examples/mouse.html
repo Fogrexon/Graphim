@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graphim Examples - Mouse</title>
+  <script src="../build/umd/graphim.js"></script>
+</head>
+<body>
+  <img src="./images/image1.jpg" width=500 /><br>
+  <a href="./index.html">Back</a>
+  <script>
+const img = document.getElementsByTagName("img")[0];
+img.addEventListener('load', () => {
+  const renderer = new Graphim.Renderer({
+    image: img,
+  });
+  const uni = new Graphim.UniformSetter();
+  const power = new Graphim.Float(0.0);
+  uni.set('power', power);
+  const filter = new Graphim.Filter(`
+uniform float power;
+void main(void) {
+  float dist = distance(vUv, mouse);
+  float decay = exp(-dist * 5.0 - 2.0);
+  gl_FragColor = texture2D(renderTexture, vUv + normalize(mouse - vUv) * sin(-time * 10.0 + dist * 30.0) * decay * power);
+}
+  `, uni);
+
+  const input = new Graphim.DefaultInput();
+
+  filter.connect(input);
+  renderer.animate(filter);
+
+  // update power
+  setInterval(() => {
+    power.set(power.x * 0.95);
+  }, 1000 / 60);
+
+  renderer.canvas.addEventListener('mousemove', () => power.set(1));
+  renderer.canvas.addEventListener('touchmove', () => power.set(1));
+});
+  </script>
+</body>
+</html>

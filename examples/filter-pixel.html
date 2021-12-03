@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graphim Examples - Pixel Filter</title>
+  <script src="../build/umd/graphim.js"></script>
+</head>
+<body>
+  <img src="./images/image1.jpg" width=500 />
+  <div>
+    Block-size: <input type="range" min=1 max=30 value=1 id="block-size" step="1" />
+  </div><br>
+  <a href="./index.html">Back</a>
+  <script>
+    let filter;
+const img = document.getElementsByTagName("img")[0];
+img.addEventListener('load', () => {
+  const renderer = new Graphim.Renderer({
+    image: img,
+  });
+  filter = new Graphim.Primitives.Pixel(1);
+  const input = new Graphim.DefaultInput();
+
+  filter.connect(input);
+  renderer.animate( filter );
+});
+
+document.getElementById('block-size').addEventListener('change', (e) => {
+  filter.uniforms.valueMap.blockSize.set(e.target.value);
+})
+  </script>
+</body>
+</html>
