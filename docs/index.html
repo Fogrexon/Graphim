@@ -1,0 +1,81 @@
+<!DOCTYPE html><html class="default"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>graphim</title><meta name="description" content="Documentation for graphim"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.body.classList.add(localStorage.getItem("tsd-theme") || "os")</script><header><div class="tsd-page-toolbar"><div class="container"><div class="table-wrap"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption">Search</label><input type="text" id="tsd-search-field"/></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">graphim</a></div><div class="table-cell" id="tsd-widgets"><div id="tsd-filter"><a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a><div class="tsd-filter-group"><div class="tsd-select" id="tsd-filter-visibility"><span class="tsd-select-label">All</span><ul class="tsd-select-list"><li data-value="public">Public</li><li data-value="protected">Public/Protected</li><li data-value="private" class="selected">All</li></ul></div> <input type="checkbox" id="tsd-filter-inherited" checked/><label class="tsd-widget" for="tsd-filter-inherited">Inherited</label><input type="checkbox" id="tsd-filter-externals" checked/><label class="tsd-widget" for="tsd-filter-externals">Externals</label></div></div><a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a></div></div></div></div><div class="tsd-page-title"><div class="container"><h1>graphim</h1></div></div></header><div class="container container-main"><div class="row"><div class="col-8 col-content"><div class="tsd-panel tsd-typography">
+<a href="#graphim" id="graphim" style="color: inherit; text-decoration: none;">
+  <h1>Graphim</h1>
+</a>
+<p>This library is for image effect by WebGL</p>
+
+<a href="#build" id="build" style="color: inherit; text-decoration: none;">
+  <h2>Build</h2>
+</a>
+<pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">i</span><br/><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">run</span><span class="hl-1"> </span><span class="hl-0">build</span>
+</code></pre>
+
+<a href="#install" id="install" style="color: inherit; text-decoration: none;">
+  <h2>Install</h2>
+</a>
+<p>on npm</p>
+<pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">install</span><span class="hl-1"> --</span><span class="hl-0">save</span><span class="hl-1"> </span><span class="hl-0">graphim</span>
+</code></pre>
+
+<a href="#use" id="use" style="color: inherit; text-decoration: none;">
+  <h2>Use</h2>
+</a>
+
+<a href="#script-tag" id="script-tag" style="color: inherit; text-decoration: none;">
+  <h3>Script tag</h3>
+</a>
+<p>copy build/umd/graphim.js</p>
+<pre><code class="language-html"><span class="hl-2">&lt;</span><span class="hl-3">script</span><span class="hl-4"> </span><span class="hl-5">src</span><span class="hl-4">=</span><span class="hl-6">&quot;./{path}/graphim.js&quot;</span><span class="hl-2">&gt;</span>
+</code></pre>
+
+<a href="#npm" id="npm" style="color: inherit; text-decoration: none;">
+  <h3>npm</h3>
+</a>
+<pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">install</span><span class="hl-1"> --</span><span class="hl-0">save</span><span class="hl-1"> </span><span class="hl-0">graphim</span>
+</code></pre>
+<pre><code class="language-javascript"><span class="hl-7">import</span><span class="hl-1"> </span><span class="hl-8">*</span><span class="hl-1"> </span><span class="hl-7">as</span><span class="hl-1"> </span><span class="hl-0">Graphim</span><span class="hl-1"> </span><span class="hl-7">from</span><span class="hl-1"> </span><span class="hl-9">&#39;graphim&#39;</span><span class="hl-1">;</span>
+</code></pre>
+
+<a href="#example" id="example" style="color: inherit; text-decoration: none;">
+  <h3>Example</h3>
+</a>
+<pre><code class="language-javascript"><span class="hl-10">// Renderer</span><br/><span class="hl-8">const</span><span class="hl-1"> </span><span class="hl-11">renderer</span><span class="hl-1"> = </span><span class="hl-8">new</span><span class="hl-1"> </span><span class="hl-0">Graphim</span><span class="hl-1">.</span><span class="hl-12">Renderer</span><span class="hl-1">({</span><br/><span class="hl-1">  </span><span class="hl-0">image:</span><span class="hl-1"> </span><span class="hl-0">img</span><span class="hl-1">, </span><span class="hl-10">// image: HTMLImageElement</span><br/><span class="hl-1">});</span><br/><br/><span class="hl-10">// set new image</span><br/><span class="hl-0">renderer</span><span class="hl-1">.</span><span class="hl-12">setImage</span><span class="hl-1">(</span><span class="hl-0">image</span><span class="hl-1">);</span><br/><br/><span class="hl-10">// Uniform</span><br/><span class="hl-8">const</span><span class="hl-1"> </span><span class="hl-11">uni</span><span class="hl-1"> = </span><span class="hl-8">new</span><span class="hl-1"> </span><span class="hl-0">Graphim</span><span class="hl-1">.</span><span class="hl-12">UniformSetter</span><span class="hl-1">();</span><br/><span class="hl-0">uni</span><span class="hl-1">.</span><span class="hl-12">set</span><span class="hl-1">(</span><span class="hl-9">&#39;delta&#39;</span><span class="hl-1">, </span><span class="hl-8">new</span><span class="hl-1"> </span><span class="hl-0">Graphim</span><span class="hl-1">.</span><span class="hl-12">Vector2</span><span class="hl-1">(</span><span class="hl-13">0.1</span><span class="hl-1">, </span><span class="hl-13">0.2</span><span class="hl-1">));</span><br/><span class="hl-10">// built-in uniform types</span><br/><span class="hl-10">// uni.set(&#39;name&#39;, new Graphim.Vector2(x, y));                    // vec2</span><br/><span class="hl-10">// uni.set(&#39;name&#39;, new Graphim.Vector3(x, y, z));                 // vec3</span><br/><span class="hl-10">// uni.set(&#39;name&#39;, new Graphim.Vector4(x, y, z, w));              // vec4</span><br/><span class="hl-10">// uni.set(&#39;name&#39;, new Graphim.Color(r, g, b, a));                // vec4</span><br/><span class="hl-10">// uni.set(&#39;name&#39;, new Graphim.Matrix4([/* 4x4 number list */])); // mat4</span><br/><span class="hl-10">// uni.set(&#39;name&#39;, new Graphim.Float(x));                         // float</span><br/><span class="hl-10">// uni.set(&#39;name&#39;, new Graphim.Int(x));                           // int</span><br/><br/><span class="hl-10">// Filter</span><br/><span class="hl-8">const</span><span class="hl-1"> </span><span class="hl-11">filter</span><span class="hl-1"> = </span><span class="hl-8">new</span><span class="hl-1"> </span><span class="hl-0">Graphim</span><span class="hl-1">.</span><span class="hl-12">Filter</span><span class="hl-1">(</span><br/><span class="hl-1">  </span><span class="hl-9">`</span><br/><span class="hl-9">uniform vec2 delta;</span><br/><span class="hl-9">void main(void) {</span><br/><span class="hl-9">  gl_FragColor = texture2D(renderTexture, vUv + sin(time) * distance(vUv, vec2(0.5, 0.5)) * delta);</span><br/><span class="hl-9">}</span><br/><span class="hl-9">  `</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-0">uni</span><br/><span class="hl-1">);</span><br/><br/><span class="hl-10">// set new shader</span><br/><span class="hl-0">filter</span><span class="hl-1">.</span><span class="hl-12">setShader</span><span class="hl-1">(</span><span class="hl-0">newShader</span><span class="hl-1">, </span><span class="hl-0">uniform</span><span class="hl-1">?);</span><br/><br/><span class="hl-10">// connect input node</span><br/><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-0">input</span><span class="hl-1"> = </span><span class="hl-8">new</span><span class="hl-1"> </span><span class="hl-0">Graphim</span><span class="hl-1">.</span><span class="hl-12">DefaultInput</span><span class="hl-1">();</span><br/><span class="hl-0">filter</span><span class="hl-1">.</span><span class="hl-12">connect</span><span class="hl-1">(</span><span class="hl-0">input</span><span class="hl-1">);</span><br/><br/><span class="hl-10">// render</span><br/><span class="hl-0">renderer</span><span class="hl-1">.</span><span class="hl-12">animate</span><span class="hl-1">(</span><span class="hl-0">filter</span><span class="hl-1">);</span><br/><span class="hl-10">// render once</span><br/><span class="hl-10">// renderer.render(filter);</span>
+</code></pre>
+<p>for more details, see examples.</p>
+
+<a href="#default-shader-variables" id="default-shader-variables" style="color: inherit; text-decoration: none;">
+  <h2>default shader variables</h2>
+</a>
+<pre><code class="language-glsl">precision mediump float;
+// vertex pos (-1 ~ 1)
+varying vec4 vPosition;
+// uv
+varying vec2 vUv;
+
+// before frame buffer
+uniform sampler2D renderTexture;
+// time
+uniform float time;
+// canvas resolution
+uniform vec2 resolution;
+// mouse pos (0 ~ 1)
+uniform vec2 mouse;
+// hover on canvas
+uniform int isHover;
+</code></pre>
+
+<a href="#documents" id="documents" style="color: inherit; text-decoration: none;">
+  <h2>Documents</h2>
+</a>
+<p><a href="https://fogrexon.github.io/Graphim/docs/index.html">https://fogrexon.github.io/Graphim/docs/index.html</a></p>
+
+<a href="#demos" id="demos" style="color: inherit; text-decoration: none;">
+  <h2>Demos</h2>
+</a>
+<p><a href="https://fogrexon.github.io/Graphim/examples/index.html">https://fogrexon.github.io/Graphim/examples/index.html</a></p>
+
+<a href="#author" id="author" style="color: inherit; text-decoration: none;">
+  <h2>Author</h2>
+</a>
+<p>Fogrexon</p>
+</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Exports</a></li><li class=" tsd-kind-namespace"><a href="modules/Primitives.html">Primitives</a></li></ul></nav><nav class="tsd-navigation secondary menu-sticky"><ul><li class="tsd-kind-class"><a href="classes/BlendFilter.html" class="tsd-kind-icon">Blend<wbr/>Filter</a></li><li class="tsd-kind-class"><a href="classes/BlendNode.html" class="tsd-kind-icon">Blend<wbr/>Node</a></li><li class="tsd-kind-class"><a href="classes/Color.html" class="tsd-kind-icon">Color</a></li><li class="tsd-kind-class"><a href="classes/CustomInput.html" class="tsd-kind-icon">Custom<wbr/>Input</a></li><li class="tsd-kind-class"><a href="classes/DefaultInput.html" class="tsd-kind-icon">Default<wbr/>Input</a></li><li class="tsd-kind-class"><a href="classes/DelayNode.html" class="tsd-kind-icon">Delay<wbr/>Node</a></li><li class="tsd-kind-class"><a href="classes/Filter.html" class="tsd-kind-icon">Filter</a></li><li class="tsd-kind-class"><a href="classes/Float.html" class="tsd-kind-icon">Float</a></li><li class="tsd-kind-class"><a href="classes/GraphimNode.html" class="tsd-kind-icon">Graphim<wbr/>Node</a></li><li class="tsd-kind-class"><a href="classes/Matrix4.html" class="tsd-kind-icon">Matrix4</a></li><li class="tsd-kind-class"><a href="classes/MiddleNode.html" class="tsd-kind-icon">Middle<wbr/>Node</a></li><li class="tsd-kind-class"><a href="classes/Renderer.html" class="tsd-kind-icon">Renderer</a></li><li class="tsd-kind-class"><a href="classes/UniformSetter.html" class="tsd-kind-icon">Uniform<wbr/>Setter</a></li><li class="tsd-kind-class"><a href="classes/Vector2.html" class="tsd-kind-icon">Vector2</a></li><li class="tsd-kind-class"><a href="classes/Vector3.html" class="tsd-kind-icon">Vector3</a></li><li class="tsd-kind-class"><a href="classes/Vector4.html" class="tsd-kind-icon">Vector4</a></li><li class="tsd-kind-interface"><a href="interfaces/ForwardingData.html" class="tsd-kind-icon">Forwarding<wbr/>Data</a></li><li class="tsd-kind-interface"><a href="interfaces/RenderSetting.html" class="tsd-kind-icon">Render<wbr/>Setting</a></li><li class="tsd-kind-interface"><a href="interfaces/Uniform.html" class="tsd-kind-icon">Uniform</a></li><li class="tsd-kind-type-alias"><a href="modules.html#CanvasID" class="tsd-kind-icon">CanvasID</a></li><li class="tsd-kind-type-alias"><a href="modules.html#RenderID" class="tsd-kind-icon">RenderID</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li><li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li><li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>
