@@ -19,7 +19,7 @@ jobs:
       - name: Build App
         run: npm run docs
       - name: Copy Files
-        run: mkdir public && cp build public -r && cp examples public -r && cp docs public -r 
+        run: mkdir public && cp build public -r && cp examples public -r && cp docs public -r  && cp README.md public
       - name: App Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
