@@ -18,8 +18,10 @@ jobs:
           npm install
       - name: Build App
         run: npm run docs
+      - name: Copy Files
+        run: cp build public -r && cp examples public -r && cp docs public -r 
       - name: App Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
+          publish_dir: ./public
