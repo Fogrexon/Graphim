@@ -10,7 +10,8 @@
     "start:example": "http-server",
     "lint:prettier": "prettier \"./src/**/*.ts\"",
     "lint:eslint": "eslint \"./src/**/*.ts\"",
-    "lint:fix": "prettier \"./src/**/*.ts\" --write & eslint \"./src/**/*.ts\" --fix"
+    "lint:fix": "prettier \"./src/**/*.ts\" --write & eslint \"./src/**/*.ts\" --fix",
+    "docs": "typedoc --out ./docs/ ./src/"
   },
   "repository": {
     "type": "git",

@@ -1,3 +1,10 @@
+/**
+ * Create VBO
+ *
+ * @param {WebGLRenderingContext} gl
+ * @param {number[]} data
+ * @return {*}  {WebGLBuffer}
+ */
 const createVBO = (gl: WebGLRenderingContext, data: number[]): WebGLBuffer => {
   const vbo: WebGLBuffer = <WebGLBuffer>gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
@@ -6,6 +13,13 @@ const createVBO = (gl: WebGLRenderingContext, data: number[]): WebGLBuffer => {
   return vbo;
 };
 
+/**
+ * Create VBO
+ *
+ * @param {WebGLRenderingContext} gl
+ * @param {number[]} index
+ * @return {*}  {WebGLBuffer}
+ */
 const createIBO = (gl: WebGLRenderingContext, index: number[]): WebGLBuffer => {
   const ibo: WebGLBuffer = <WebGLBuffer>gl.createBuffer();
 
@@ -22,6 +36,11 @@ const INDEX_ARRAY = [0, 1, 2, 1, 3, 2];
 
 const UV_ARRAY = [0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0];
 
+/**
+ * quad geometry covering full range of canvas.
+ *
+ * @class FullScreenQuad
+ */
 class FullScreenQuad {
   private positionLocation: number = -1;
 
@@ -33,6 +52,13 @@ class FullScreenQuad {
 
   private indexIBO: WebGLBuffer | null = null;
 
+  /**
+   * Initialize (only renderer calls)
+   *
+   * @param {WebGLRenderingContext} gl
+   * @param {WebGLProgram} program
+   * @memberof FullScreenQuad
+   */
   public init(gl: WebGLRenderingContext, program: WebGLProgram) {
     // position location
     this.positionLocation = gl.getAttribLocation(program, 'position');
@@ -46,12 +72,24 @@ class FullScreenQuad {
     this.indexIBO = createIBO(gl, INDEX_ARRAY);
   }
 
+  /**
+   * Release
+   *
+   * @param {WebGLRenderingContext} gl
+   * @memberof FullScreenQuad
+   */
   public release(gl: WebGLRenderingContext) {
     gl.deleteBuffer(this.positionVBO);
     gl.deleteBuffer(this.uvVBO);
     gl.deleteBuffer(this.indexIBO);
   }
 
+  /**
+   * Bind variables to shaders
+   *
+   * @param {WebGLRenderingContext} gl
+   * @memberof FullScreenQuad
+   */
   public render(gl: WebGLRenderingContext) {
     // position
     gl.bindBuffer(gl.ARRAY_BUFFER, this.positionVBO);

@@ -4,15 +4,43 @@ import { CanvasID, GraphimNode, RenderSetting } from './GraphimNode';
 import { compileShader } from '../utils';
 import { MiddleNode } from './MiddleNode';
 
+/**
+ * Filter node
+ *
+ * @export
+ * @class Filter
+ * @extends {MiddleNode}
+ */
 export class Filter extends MiddleNode {
+  /**
+   * Initialize (only renderer calls)
+   *
+   * @param {WebGLRenderingContext} gl
+   * @param {CanvasID} canvasID
+   * @memberof Filter
+   */
   public init(gl: WebGLRenderingContext, canvasID: CanvasID) {
     super.init(gl, canvasID);
   }
 
+  /**
+   * Get initialized uuid
+   *
+   * @return {*} 
+   * @memberof Filter
+   */
   public getInitializedUUID() {
     return this.initialized;
   }
 
+  /**
+   * Reassign shader
+   *
+   * @param {string} newShader
+   * @param {UniformSetter} [newUniforms]
+   * @return {*} 
+   * @memberof Filter
+   */
   public setShader(newShader: string, newUniforms?: UniformSetter) {
     if (!this.gl || !this.program || !this.vertexShader || !this.fragmentShader) {
       console.warn('filter is not initialized.');
@@ -30,6 +58,13 @@ export class Filter extends MiddleNode {
     this.uniforms?.init(this.gl, this.program);
   }
 
+  /**
+   * Render filter (only renderer calls)
+   *
+   * @param {RenderSetting} setting
+   * @return {*} 
+   * @memberof Filter
+   */
   public render(setting: RenderSetting) {
     if (!this.gl || !this.initialized || setting.canvasID !== this.initialized) {
       this.init(setting.gl, setting.canvasID);
